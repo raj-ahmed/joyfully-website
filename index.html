@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="joyfully.in – Guwahati's complete pet care platform. Book grooming, hostel, vet visits, adoption and more."/>
+<title>joyfully.in – Everything Your Pet Deserves 🐾</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCoh862TIz9v3JM7qCtCHLKpx84FyGFJko",
+  authDomain: "joyfully-in.firebaseapp.com",
+  projectId: "joyfully-in",
+  storageBucket: "joyfully-in.firebasestorage.app",
+  messagingSenderId: "994700639123",
+  appId: "1:994700639123:web:bc5b28e78cd005efd78666"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+window.DB = db; window.AUTH = auth;
+window.FIREBASE = { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged };
+window.currentUser = null;
+
+onAuthStateChanged(auth, async (user) => {
+  window.currentUser = user;
+  updateAuthUI();
+});
+</script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:#faf9ff;color:#1e1b2e;overflow-x:hidden;}
+:root{
+  --p:#6C5CE7;--pl:#a29bfe;--p2:#4834d4;
+  --acc:#fd79a8;--teal:#00cec9;--gold:#fdcb6e;
+  --dark:#1e1b2e;--mid:#5a5475;--muted:#9892b0;
+  --bg:#faf9ff;--card:#fff;--border:#ede9ff;
+  --green:#00b894;--red:#d63031;
+  --shadow:0 8px 40px rgba(108,92,231,.12);
+  --shadow-sm:0 4px 20px rgba(108,92,231,.08);
+  --r:18px;
+}
+/* ── UTILS ── */
+.container{max-width:1160px;margin:0 auto;padding:0 24px;}
+.btn{display:inline-flex;align-items:center;gap:8px;border:none;border-radius:50px;padding:12px 26px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;text-decoration:none;transition:all .25s;white-space:nowrap;}
+.btn-primary{background:var(--p);color:#fff;box-shadow:0 6px 20px rgba(108,92,231,.35);}
+.btn-primary:hover{background:var(--p2);transform:translateY(-2px);}
+.btn-white{background:#fff;color:var(--p);}
+.btn-white:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.btn-outline{background:transparent;color:var(--p);border:2px solid var(--p);}
+.btn-outline:hover{background:var(--p);color:#fff;}
+.btn-acc{background:var(--acc);color:#fff;}
+.btn-acc:hover{transform:translateY(-2px);filter:brightness(1.05);}
+.btn-sm{padding:8px 18px;font-size:13px;}
+.tag{display:inline-flex;align-items:center;gap:6px;background:rgba(108,92,231,.1);color:var(--p);border-radius:50px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.3px;}
+.section{padding:88px 0;}
+.section-head{text-align:center;margin-bottom:52px;}
+.section-head h2{font-family:'Baloo 2',cursive;font-size:clamp(26px,4vw,42px);font-weight:900;color:var(--dark);line-height:1.15;margin-bottom:12px;}
+.section-head p{color:var(--mid);font-size:16px;max-width:520px;margin:0 auto;line-height:1.7;}
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;transition:all .3s;}
+nav.scrolled{background:rgba(255,255,255,.97);backdrop-filter:blur(20px);box-shadow:0 2px 24px rgba(108,92,231,.1);}
+.nav-inner{max-width:1160px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:40px;height:40px;background:linear-gradient(135deg,var(--p),var(--acc));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.logo-txt{font-family:'Baloo 2',cursive;font-size:20px;font-weight:900;color:var(--dark);}
+.logo-txt span{color:var(--p);}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--mid);font-weight:700;font-size:14px;transition:color .2s;}
+.nav-links a:hover{color:var(--p);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-user-info{display:none;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--mid);}
+.nav-user-info.visible{display:flex;}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;}
+.ham span{display:block;width:24px;height:2px;background:var(--dark);border-radius:2px;}
+/* ── MOBILE NAV ── */
+.mob-nav{display:none;position:fixed;inset:0;background:#fff;z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:28px;}
+.mob-nav.open{display:flex;}
+.mob-nav a{font-family:'Baloo 2',cursive;font-size:26px;font-weight:900;color:var(--dark);text-decoration:none;}
+.mob-close{position:absolute;top:20px;right:20px;background:none;border:none;font-size:26px;cursor:pointer;}
+/* ── HERO ── */
+#hero{min-height:100vh;background:linear-gradient(135deg,#0f0c29 0%,#302b63 55%,#24243e 100%);display:flex;align-items:center;position:relative;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
+.o1{width:500px;height:500px;background:radial-gradient(circle,rgba(108,92,231,.5),transparent 70%);top:-100px;left:-100px;}
+.o2{width:380px;height:380px;background:radial-gradient(circle,rgba(253,121,168,.35),transparent 70%);bottom:-60px;right:-60px;}
+.o3{width:280px;height:280px;background:radial-gradient(circle,rgba(0,206,201,.2),transparent 70%);top:40%;left:45%;}
+.fpaw{position:absolute;font-size:22px;opacity:.05;animation:drift var(--d,12s) ease-in-out infinite;animation-delay:var(--del,0s);}
+@keyframes drift{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-28px) rotate(8deg);}}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:120px 24px 80px;max-width:1160px;margin:0 auto;}
+.hero-content{animation:fadeUp .8s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50px;padding:7px 18px;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:22px;}
+.hero-badge span{color:var(--gold);}
+.hero-content h1{font-family:'Baloo 2',cursive;font-size:clamp(34px,5vw,64px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:18px;}
+.hero-content h1 em{font-style:normal;background:linear-gradient(135deg,var(--gold),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-content p{color:rgba(255,255,255,.7);font-size:17px;line-height:1.7;margin-bottom:32px;max-width:460px;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:44px;}
+.hero-stats{display:flex;gap:28px;flex-wrap:wrap;}
+.hst{text-align:center;}
+.hst-v{font-family:'Baloo 2',cursive;font-size:26px;font-weight:900;color:#fff;}
+.hst-l{font-size:11px;color:rgba(255,255,255,.5);font-weight:700;margin-top:2px;}
+.hero-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;animation:fadeUp .8s .2s ease both;}
+.hcard{border-radius:18px;padding:18px;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);}
+.hcard-full{grid-column:1/-1;background:linear-gradient(135deg,rgba(108,92,231,.3),rgba(162,155,254,.15));text-align:center;padding:22px 18px;}
+.hcard-a{background:rgba(253,121,168,.15);}
+.hcard-b{background:rgba(0,206,201,.15);}
+.hcard em{font-size:36px;display:block;margin-bottom:8px;font-style:normal;}
+.hcard .hc-full-em{font-size:48px;}
+.hcard h4{font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;color:#fff;margin-bottom:3px;}
+.hcard p{font-size:12px;color:rgba(255,255,255,.6);}
+.live-dot{width:7px;height:7px;background:#4caf50;border-radius:50%;animation:pulse 1.5s ease-in-out infinite;display:inline-block;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.4);}}
+/* ── SERVICES ── */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;}
+.svc-card{background:#fff;border-radius:20px;padding:26px 16px 20px;text-align:center;border:2px solid var(--border);cursor:pointer;transition:all .3s;text-decoration:none;display:block;}
+.svc-card:hover{border-color:var(--p);transform:translateY(-5px);box-shadow:var(--shadow);}
+.svc-icon{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 12px;}
+.svc-card h3{font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;color:var(--dark);margin-bottom:5px;}
+.svc-card p{font-size:11px;color:var(--muted);line-height:1.5;}
+.svc-card .svc-arr{margin-top:12px;color:var(--p);font-size:16px;opacity:0;transition:all .2s;}
+.svc-card:hover .svc-arr{opacity:1;transform:translateX(4px);}
+/* New: dog burial service card */
+.svc-card.burial{border-color:rgba(74,74,74,.2);background:linear-gradient(135deg,#f9f9f9,#fff);}
+.svc-card.burial:hover{border-color:#5d5d5d;}
+.svc-card.burial .svc-icon{background:#f5f5f5;}
+/* ── AGENCIES ── */
+.agency-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;}
+.agency-card{background:#fff;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);transition:all .3s;cursor:pointer;}
+.agency-card:hover{transform:translateY(-5px);box-shadow:var(--shadow);}
+.agency-img{height:150px;display:flex;align-items:center;justify-content:center;font-size:56px;position:relative;}
+.agency-badge{position:absolute;top:10px;right:10px;background:var(--green);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;}
+.agency-body{padding:16px 18px 18px;}
+.agency-name{font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;color:var(--dark);margin-bottom:3px;}
+.agency-type{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.agency-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.atag{background:var(--bg);color:var(--p);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.agency-rating{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;}
+.stars{color:#fdcb6e;letter-spacing:1px;}
+/* ── BOOKING FORM ── */
+#booking{background:#fff;}
+.booking-wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+.booking-info h2{font-family:'Baloo 2',cursive;font-size:clamp(24px,4vw,38px);font-weight:900;color:var(--dark);margin-bottom:14px;}
+.booking-info p{color:var(--mid);font-size:15px;line-height:1.7;margin-bottom:24px;}
+.binfo-steps{display:flex;flex-direction:column;gap:14px;}
+.bstep{display:flex;align-items:flex-start;gap:14px;}
+.bstep-num{width:36px;height:36px;background:linear-gradient(135deg,var(--p),var(--pl));border-radius:50%;color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bstep-text h4{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:2px;}
+.bstep-text p{font-size:12px;color:var(--muted);line-height:1.5;}
+.booking-form-box{background:#fff;border-radius:24px;padding:32px;border:1px solid var(--border);box-shadow:var(--shadow);}
+.booking-form-box h3{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--dark);margin-bottom:22px;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:12px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;border:2px solid var(--border);border-radius:11px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--dark);outline:none;transition:border-color .2s;background:#fff;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--p);}
+.form-group textarea{resize:vertical;min-height:80px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-success{display:none;text-align:center;padding:28px 0;}
+.form-success.show{display:block;}
+/* ── STORE PREVIEW ── */
+.products-scroll{display:flex;gap:16px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none;}
+.products-scroll::-webkit-scrollbar{display:none;}
+.prod-mini{background:#fff;border-radius:16px;min-width:200px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;transition:all .3s;}
+.prod-mini:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+.prod-mini-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;}
+.prod-mini-body{padding:12px 14px 14px;}
+.prod-mini-body h4{font-size:13px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+.prod-mini-footer{display:flex;align-items:center;justify-content:space-between;}
+.prod-price{font-family:'Baloo 2',cursive;font-size:18px;font-weight:900;color:var(--p);}
+.add-cart-btn{background:var(--p);color:#fff;border:none;border-radius:10px;padding:7px 12px;font-weight:800;font-size:12px;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;}
+.add-cart-btn:hover{background:var(--p2);}
+/* ── CART FLOAT ── */
+.cart-float{position:fixed;bottom:24px;right:24px;background:var(--p);color:#fff;border:none;border-radius:50px;padding:13px 20px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 8px 28px rgba(108,92,231,.4);z-index:150;display:flex;align-items:center;gap:8px;transition:all .2s;}
+.cart-float:hover{transform:translateY(-2px);}
+.cart-badge{background:#fff;color:var(--p);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;}
+/* ── AGENCY REGISTER ── */
+#register-agency{background:linear-gradient(135deg,#1e1b2e,#302b63);}
+.reg-wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+.reg-info h2{font-family:'Baloo 2',cursive;font-size:clamp(24px,4vw,38px);font-weight:900;color:#fff;margin-bottom:14px;}
+.reg-info p{color:rgba(255,255,255,.7);font-size:15px;line-height:1.7;margin-bottom:24px;}
+.reg-perks{display:flex;flex-direction:column;gap:12px;}
+.rperk{display:flex;align-items:flex-start;gap:12px;}
+.rperk-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.rperk-text h4{font-size:14px;font-weight:800;color:#fff;margin-bottom:2px;}
+.rperk-text p{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;}
+.reg-form-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:32px;backdrop-filter:blur(20px);}
+.reg-form-box h3{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:#fff;margin-bottom:22px;}
+.reg-form-box label{color:rgba(255,255,255,.8);}
+.reg-form-box input,.reg-form-box select,.reg-form-box textarea{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;}
+.reg-form-box input::placeholder{color:rgba(255,255,255,.35);}
+.reg-form-box input:focus,.reg-form-box select:focus,.reg-form-box textarea:focus{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.12);}
+.reg-form-box select option{background:#302b63;color:#fff;}
+/* ── TESTIMONIALS ── */
+#testimonials{background:linear-gradient(135deg,#1e1b2e,#302b63);}
+.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+.test-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:24px;}
+.test-stars{font-size:16px;color:#fdcb6e;margin-bottom:12px;}
+.test-quote{font-size:14px;color:rgba(255,255,255,.8);line-height:1.7;font-style:italic;margin-bottom:18px;}
+.test-author{display:flex;align-items:center;gap:12px;}
+.test-av{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.test-name{font-weight:800;color:#fff;font-size:13px;}
+.test-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px;}
+/* ── APP ── */
+#app-section{background:linear-gradient(135deg,var(--p),var(--acc));text-align:center;padding:88px 24px;}
+#app-section h2{font-family:'Baloo 2',cursive;font-size:clamp(26px,4vw,44px);font-weight:900;color:#fff;margin-bottom:12px;}
+#app-section p{color:rgba(255,255,255,.85);font-size:17px;margin-bottom:32px;}
+.app-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.app-btn{display:inline-flex;align-items:center;gap:12px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:14px;padding:12px 22px;color:#fff;text-decoration:none;transition:all .25s;backdrop-filter:blur(10px);}
+.app-btn:hover{background:rgba(255,255,255,.25);transform:translateY(-3px);}
+.app-btn-icon{font-size:26px;}
+.app-btn-label{font-size:11px;opacity:.7;font-weight:700;}
+.app-btn-store{font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;}
+/* ── FOOTER ── */
+footer{background:#0f0c1e;padding:56px 0 28px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.fbrand p{color:rgba(255,255,255,.4);font-size:13px;line-height:1.7;margin:12px 0 18px;max-width:260px;}
+.fsocial{display:flex;gap:8px;}
+.fsoc-btn{width:36px;height:36px;background:rgba(255,255,255,.07);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;text-decoration:none;transition:background .2s;}
+.fsoc-btn:hover{background:var(--p);}
+.fcol h4{font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;color:#fff;margin-bottom:14px;}
+.fcol ul{list-style:none;}
+.fcol ul li{margin-bottom:9px;}
+.fcol ul li a{color:rgba(255,255,255,.4);text-decoration:none;font-size:13px;transition:color .2s;}
+.fcol ul li a:hover{color:#fff;}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.footer-bottom p{color:rgba(255,255,255,.25);font-size:12px;}
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.hidden{display:none;}
+.modal{background:#fff;border-radius:22px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+.modal h3{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;margin-bottom:20px;}
+/* ── LOGIN MODAL ── */
+.login-tabs{display:flex;gap:0;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:20px;}
+.ltab{flex:1;padding:9px;text-align:center;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;color:var(--muted);transition:all .2s;}
+.ltab.active{background:#fff;color:var(--p);box-shadow:var(--shadow-sm);}
+/* ── WA FLOAT ── */
+.wa-float{position:fixed;bottom:90px;right:24px;background:#25d366;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 20px rgba(37,211,102,.4);text-decoration:none;animation:bounce 2.5s ease-in-out infinite;z-index:149;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e1b2e;color:#fff;padding:13px 22px;border-radius:13px;font-weight:700;font-size:13px;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.success{background:var(--green);}
+.toast.error{background:var(--red);}
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-d1{transition-delay:.1s;}.reveal-d2{transition-delay:.2s;}.reveal-d3{transition-delay:.3s;}
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero-inner,.booking-wrap,.reg-wrap{grid-template-columns:1fr;}
+  .hero-cards,.footer-grid{display:none;}
+  .nav-links{display:none;}
+  .ham{display:flex;}
+}
+@media(max-width:600px){
+  .section{padding:60px 0;}
+  .hero-btns{flex-direction:column;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="logo-mark">🐾</div>
+      <span class="logo-txt">joyfully<span>.in</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#agencies">Find Agencies</a></li>
+      <li><a href="#store">Store</a></li>
+      <li><a href="#booking">Book Now</a></li>
+      <li><a href="#register-agency">List Your Business</a></li>
+    </ul>
+    <div class="nav-right">
+      <div class="nav-user-info" id="navUserInfo">
+        <span id="navUserName"></span>
+        <button class="btn btn-outline btn-sm" onclick="handleSignOut()">Sign Out</button>
+      </div>
+      <a href="#" class="btn btn-outline btn-sm" id="navLoginBtn" onclick="openLoginModal(event)">Sign In</a>
+      <a href="/admin" class="btn btn-primary btn-sm">Admin Panel →</a>
+    </div>
+    <button class="ham" id="ham" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mob-nav" id="mobNav">
+  <button class="mob-close" id="mobClose">✕</button>
+  <a href="#services" onclick="closeMob()">Services</a>
+  <a href="#agencies" onclick="closeMob()">Find Agencies</a>
+  <a href="#store" onclick="closeMob()">Store</a>
+  <a href="#booking" onclick="closeMob()">Book Now</a>
+  <a href="#register-agency" onclick="closeMob()">List Your Business</a>
+  <a href="#" class="btn btn-primary" onclick="openLoginModal(event);closeMob()">Sign In</a>
+</div>
+
+<!-- ── HERO ──────────────────────────────────────────── -->
+<section id="hero">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <span class="fpaw" style="top:12%;left:4%;--d:14s;--del:0s">🐾</span>
+  <span class="fpaw" style="top:65%;left:7%;--d:11s;--del:2s">🐕</span>
+  <span class="fpaw" style="top:22%;right:8%;--d:13s;--del:1s">🐈</span>
+  <span class="fpaw" style="top:78%;right:12%;--d:10s;--del:3s">🦴</span>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">🐾 Guwahati's #1 Pet Care Platform · <span>joyfully.in</span></div>
+      <h1>Everything Your Pet <em>Deserves</em></h1>
+      <p>Book grooming, hostel stays, vet visits, adoption, burial services & more — all from one trusted platform in Assam.</p>
+      <div class="hero-btns">
+        <a href="#booking" class="btn btn-primary" style="font-size:16px;padding:15px 30px;">Book a Service 🐾</a>
+        <a href="#agencies" class="btn btn-white" style="font-size:16px;padding:15px 30px;">Find Agencies</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hst"><div class="hst-v">500+</div><div class="hst-l">Happy Pets</div></div>
+        <div class="hst"><div class="hst-v">8</div><div class="hst-l">Services</div></div>
+        <div class="hst"><div class="hst-v">50+</div><div class="hst-l">Agencies</div></div>
+        <div class="hst"><div class="hst-v">4.9★</div><div class="hst-l">Rating</div></div>
+      </div>
+    </div>
+    <div class="hero-cards">
+      <div class="hcard hcard-full">
+        <em class="hc-full-em">🏠</em>
+        <h4>Pet Hostel Now Open!</h4>
+        <p>From ₹499/night · Full care guaranteed</p>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(76,175,80,.2);border:1px solid rgba(76,175,80,.4);border-radius:50px;padding:4px 12px;font-size:11px;font-weight:700;color:#a5d6a7;margin-top:8px;">
+          <span class="live-dot"></span> 12 spots available
+        </div>
+      </div>
+      <div class="hcard hcard-a"><em>✂️</em><h4>Dog Grooming</h4><p>From ₹2,905</p></div>
+      <div class="hcard hcard-b"><em>🩺</em><h4>Vet Clinic</h4><p>Mon–Sat · 9AM–7PM</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ──────────────────────────────────────── -->
+<section id="services" class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="tag">🐾 What We Offer</div>
+      <h2>One Platform, Every Pet Need</h2>
+      <p>From daily grooming to farewell care — joyfully.in covers every chapter of your pet's life.</p>
+    </div>
+    <div class="services-grid">
+      <a href="#store" class="svc-card reveal reveal-d1">
+        <div class="svc-icon" style="background:#e8f0fe;">🛒</div>
+        <h3>Pet Store</h3><p>Premium food, toys & grooming products</p><div class="svc-arr">→</div>
+      </a>
+      <a href="#booking" class="svc-card reveal reveal-d1">
+        <div class="svc-icon" style="background:#fce4ec;">✂️</div>
+        <h3>Dog Grooming</h3><p>Bath, haircut, spa — book online</p><div class="svc-arr">→</div>
+      </a>
+      <a href="#booking" class="svc-card reveal reveal-d2">
+        <div class="svc-icon" style="background:#e0f2f1;">🏠</div>
+        <h3>Pet Hostel</h3><p>Safe, loving stay while you travel</p><div class="svc-arr">→</div>
+      </a>
+      <a href="#booking" class="svc-card reveal reveal-d2">
+        <div class="svc-icon" style="background:#e8f5e9;">🩺</div>
+        <h3>Vet Clinic</h3><p>Expert vets, diagnostics & checkups</p><div class="svc-arr">→</div>
+      </a>
+      <a href="#booking" class="svc-card reveal reveal-d2">
+        <div class="svc-icon" style="background:#fff8e1;">🐾</div>
+        <h3>Pet Breeder</h3><p>Certified breeds with health records</p><div class="svc-arr">→</div>
+      </a>
+      <a href="#booking" class="svc-card reveal reveal-d3">
+        <div class="svc-icon" style="background:#f3e5f5;">❤️</div>
+        <h3>Animal Shelter</h3><p>Adopt, foster, donate & give love</p><div class="svc-arr">→</div>
+      </a>
+      <a href="#booking" class="svc-card reveal reveal-d3">
+        <div class="svc-icon" style="background:#e0f7fa;">📝</div>
+        <h3>Pet Blog</h3><p>Expert tips, care guides & stories</p><div class="svc-arr">→</div>
+      </a>
+      <a href="#booking" class="svc-card burial reveal reveal-d3">
+        <div class="svc-icon" style="background:#f0f0f0;">🕊️</div>
+        <h3>Pet Burial</h3><p>Dignified farewell & memorial services</p><div class="svc-arr">→</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── LISTED AGENCIES ────────────────────────────────── -->
+<section id="agencies" class="section" style="background:#fff;">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="tag">🏢 Verified Agencies</div>
+      <h2>Find Trusted Pet Service Providers</h2>
+      <p>All agencies on joyfully.in are verified. Browse by service and book instantly.</p>
+    </div>
+    <!-- Filter tabs -->
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;" id="agencyFilterTabs">
+      <button class="btn btn-primary btn-sm" onclick="filterAgencies('all',this)">All</button>
+      <button class="btn btn-outline btn-sm" onclick="filterAgencies('hostel',this)">🏠 Hostel</button>
+      <button class="btn btn-outline btn-sm" onclick="filterAgencies('grooming',this)">✂️ Grooming</button>
+      <button class="btn btn-outline btn-sm" onclick="filterAgencies('vet',this)">🩺 Vet</button>
+      <button class="btn btn-outline btn-sm" onclick="filterAgencies('adoption',this)">❤️ Adoption</button>
+      <button class="btn btn-outline btn-sm" onclick="filterAgencies('burial',this)">🕊️ Burial</button>
+    </div>
+    <div class="agency-grid" id="agencyGrid">
+      <!-- Loaded from Firebase -->
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">
+        <div style="font-size:40px;margin-bottom:12px;">⏳</div>
+        <p>Loading agencies…</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PET STORE PREVIEW ──────────────────────────────── -->
+<section id="store" class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="tag">🛒 Pet Store</div>
+      <h2>Premium Products, Delivered</h2>
+      <p>Vet-approved food, toys & grooming essentials. Free delivery in Guwahati on orders above ₹499.</p>
+    </div>
+    <div class="products-scroll" id="storeProducts">
+      <div style="text-align:center;padding:40px;color:var(--muted);width:100%;">⏳ Loading products…</div>
+    </div>
+    <div style="text-align:center;margin-top:28px;" class="reveal">
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">🚚 Free delivery in Guwahati on orders above ₹499</p>
+      <button class="btn btn-primary" onclick="openFullStore()">View Full Catalog →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── BOOKING FORM ───────────────────────────────────── -->
+<section id="booking" class="section" style="background:#fff;">
+  <div class="container">
+    <div class="booking-wrap">
+      <div class="booking-info reveal">
+        <div class="tag" style="margin-bottom:16px;">📅 Book Now</div>
+        <h2>Book Any Service in Under 2 Minutes</h2>
+        <p>Fill in the simple form and our team confirms your appointment via WhatsApp within 2 hours.</p>
+        <div class="binfo-steps" style="margin-top:24px;">
+          <div class="bstep"><div class="bstep-num">1</div><div class="bstep-text"><h4>Choose Your Service</h4><p>Select from grooming, hostel, vet, adoption, burial & more</p></div></div>
+          <div class="bstep"><div class="bstep-num">2</div><div class="bstep-text"><h4>Fill Pet Details</h4><p>Tell us about your pet so we can prepare</p></div></div>
+          <div class="bstep"><div class="bstep-num">3</div><div class="bstep-text"><h4>We Confirm on WhatsApp</h4><p>Our team contacts you within 2 hours</p></div></div>
+          <div class="bstep"><div class="bstep-num">4</div><div class="bstep-text"><h4>Pay on Arrival</h4><p>Cash, UPI or card — no advance payment needed</p></div></div>
+        </div>
+      </div>
+      <div class="reveal reveal-d2">
+        <div class="booking-form-box" id="bookingBox">
+          <h3>🐾 Make a Booking</h3>
+          <div id="bookingFormContent">
+            <div class="form-group">
+              <label>Service Required *</label>
+              <select id="bService">
+                <option value="">— Select a service —</option>
+                <option value="hostel">🏠 Pet Hostel</option>
+                <option value="grooming">✂️ Dog Grooming</option>
+                <option value="vet">🩺 Vet Appointment</option>
+                <option value="adoption">❤️ Pet Adoption Enquiry</option>
+                <option value="breeder">🐾 Pet Breeder Enquiry</option>
+                <option value="store">🛒 Pet Store Order</option>
+                <option value="burial">🕊️ Pet Burial Service</option>
+              </select>
+            </div>
+            <!-- Hostel extras -->
+            <div id="hostelExtras" style="display:none;">
+              <div class="form-row">
+                <div class="form-group"><label>Check-in Date</label><input type="date" id="bCheckIn"/></div>
+                <div class="form-group"><label>Number of Nights</label><input type="number" id="bNights" min="1" value="1" placeholder="3"/></div>
+              </div>
+            </div>
+            <!-- Burial extras -->
+            <div id="burialExtras" style="display:none;">
+              <div class="form-group">
+                <label>Type of Service</label>
+                <select id="bBurialType">
+                  <option value="basic">Basic Burial — ₹1,999</option>
+                  <option value="memorial">Memorial Service — ₹3,999</option>
+                  <option value="cremation">Cremation + Ashes — ₹5,999</option>
+                  <option value="full">Full Memorial Package — ₹8,999</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Your Name *</label><input id="bName" placeholder="Raj Sharma" value=""/></div>
+              <div class="form-group"><label>WhatsApp Number *</label><input id="bPhone" placeholder="+91 98765 43210"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Pet's Name *</label><input id="bPetName" placeholder="Bruno"/></div>
+              <div class="form-group"><label>Preferred Date</label><input type="date" id="bDate"/></div>
+            </div>
+            <div class="form-group"><label>Special Notes</label><textarea id="bNotes" placeholder="Allergies, special needs, breed, age…"></textarea></div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:15px;" onclick="submitPublicBooking()">
+              Submit Booking Request →
+            </button>
+            <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;">By submitting, you agree to receive a WhatsApp confirmation from our team.</p>
+          </div>
+          <div class="form-success" id="bookingSuccess">
+            <div style="font-size:56px;margin-bottom:14px;">🎉</div>
+            <h3 style="font-family:'Baloo 2',cursive;font-size:22px;font-weight:900;margin-bottom:8px;color:var(--dark);">Booking Received!</h3>
+            <p style="color:var(--muted);font-size:14px;line-height:1.7;">Our team will WhatsApp you a confirmation within 2 hours.<br/><strong>Download our app for live updates.</strong></p>
+            <button class="btn btn-outline" style="margin-top:16px;" onclick="resetBookingForm()">Make Another Booking</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AGENCY REGISTRATION ────────────────────────────── -->
+<section id="register-agency" class="section">
+  <div class="container">
+    <div class="reg-wrap">
+      <div class="reg-info reveal">
+        <div class="tag" style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);margin-bottom:16px;">🏢 For Businesses</div>
+        <h2>List Your Pet Business on joyfully.in</h2>
+        <p>Reach thousands of pet owners in Guwahati & Assam. Register your hostel, grooming centre, vet clinic, adoption centre or burial service today.</p>
+        <div class="reg-perks" style="margin-top:24px;">
+          <div class="rperk"><div class="rperk-icon">📱</div><div class="rperk-text"><h4>Online Bookings 24/7</h4><p>Customers can find and book your services anytime</p></div></div>
+          <div class="rperk"><div class="rperk-icon">✅</div><div class="rperk-text"><h4>Verified Business Badge</h4><p>Build trust with our verification system</p></div></div>
+          <div class="rperk"><div class="rperk-icon">📊</div><div class="rperk-text"><h4>Dashboard & Analytics</h4><p>Track bookings, revenue and customer reviews</p></div></div>
+          <div class="rperk"><div class="rperk-icon">🆓</div><div class="rperk-text"><h4>Free to Register</h4><p>No upfront cost — we only earn when you earn</p></div></div>
+          <div class="rperk"><div class="rperk-icon">🕊️</div><div class="rperk-text"><h4>New: Pet Burial Service</h4><p>List your dignified farewell & memorial services</p></div></div>
+        </div>
+      </div>
+      <div class="reveal reveal-d2">
+        <div class="reg-form-box" id="agencyRegBox">
+          <h3>Register Your Business</h3>
+          <div id="agencyRegContent">
+            <div class="form-group"><label>Business Name *</label><input id="agName" placeholder="e.g. Happy Paws Hostel"/></div>
+            <div class="form-row">
+              <div class="form-group"><label>Service Type *</label>
+                <select id="agType">
+                  <option value="">— Select —</option>
+                  <option value="hostel">🏠 Pet Hostel</option>
+                  <option value="grooming">✂️ Grooming Centre</option>
+                  <option value="vet">🩺 Vet Clinic</option>
+                  <option value="adoption">❤️ Adoption / Shelter</option>
+                  <option value="breeder">🐾 Pet Breeder</option>
+                  <option value="burial">🕊️ Pet Burial Service</option>
+                  <option value="multi">🐾 Multiple Services</option>
+                </select>
+              </div>
+              <div class="form-group"><label>City / Area *</label><input id="agCity" placeholder="e.g. Guwahati, Assam"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Owner Name *</label><input id="agOwner" placeholder="Your full name"/></div>
+              <div class="form-group"><label>WhatsApp Number *</label><input id="agPhone" placeholder="+91 98765 43210"/></div>
+            </div>
+            <div class="form-group"><label>Email *</label><input id="agEmail" type="email" placeholder="business@email.com"/></div>
+            <div class="form-group"><label>About Your Business</label><textarea id="agDesc" placeholder="Tell customers what makes your service special…" style="min-height:80px;"></textarea></div>
+            <div class="form-group"><label>Years in Business</label>
+              <select id="agYears">
+                <option value="new">Just starting</option>
+                <option value="1-2">1–2 years</option>
+                <option value="3-5">3–5 years</option>
+                <option value="5+">5+ years</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:15px;" onclick="submitAgencyReg()">
+              Submit Registration →
+            </button>
+          </div>
+          <div class="form-success" id="agencyRegSuccess">
+            <div style="font-size:56px;margin-bottom:14px;">🎉</div>
+            <h3 style="font-family:'Baloo 2',cursive;font-size:20px;font-weight:900;margin-bottom:8px;color:#fff;">Registration Received!</h3>
+            <p style="color:rgba(255,255,255,.7);font-size:14px;line-height:1.7;">Our team will review your application and contact you within 24 hours.<br/>Welcome to joyfully.in! 🐾</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ───────────────────────────────────── -->
+<section id="testimonials" class="section">
+  <div class="container">
+    <div class="section-head reveal" style="margin-bottom:40px;">
+      <div class="tag" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.9);">💬 Reviews</div>
+      <h2 style="color:#fff;">Guwahati Pet Parents Love Us</h2>
+    </div>
+    <div class="test-grid" id="reviewsGrid">
+      <!-- Static fallback + dynamic -->
+      <div class="test-card reveal reveal-d1">
+        <div class="test-stars">⭐⭐⭐⭐⭐</div>
+        <div class="test-quote">"Left Bruno at the joyfully.in Hostel for 5 days. Daily photo updates made me feel at ease. He came back happy and well-groomed!"</div>
+        <div class="test-author"><div class="test-av">😊</div><div><div class="test-name">Priya Gogoi</div><div class="test-sub">Bruno · Labrador · Guwahati</div></div></div>
+      </div>
+      <div class="test-card reveal reveal-d2">
+        <div class="test-stars">⭐⭐⭐⭐⭐</div>
+        <div class="test-quote">"Dr. Anita is the best vet in Guwahati. Booked my appointment through the website in 2 minutes. Highly recommend!"</div>
+        <div class="test-author"><div class="test-av">🙂</div><div><div class="test-name">Arjun Baruah</div><div class="test-sub">Simba · Persian Cat · Jorhat</div></div></div>
+      </div>
+      <div class="test-card reveal reveal-d3">
+        <div class="test-stars">⭐⭐⭐⭐⭐</div>
+        <div class="test-quote">"Adopted Mochi through joyfully.in — the process was so smooth. The team was incredibly supportive throughout!"</div>
+        <div class="test-author"><div class="test-av">😄</div><div><div class="test-name">Shreya Deka</div><div class="test-sub">Mochi · Cat · Guwahati</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── APP DOWNLOAD ───────────────────────────────────── -->
+<section id="app-section">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="reveal">
+      <div class="tag" style="background:rgba(255,255,255,.2);color:#fff;margin-bottom:16px;">📱 Mobile App</div>
+      <h2>Take joyfully.in Everywhere</h2>
+      <p>Book, track, shop & chat with your vet — all from your phone. Launching on Google Play Store soon!</p>
+      <div class="app-btns">
+        <a href="#" class="app-btn" onclick="showToast('App launching soon on Play Store! 🚀')">
+          <div class="app-btn-icon">🤖</div>
+          <div><div class="app-btn-label">GET IT ON</div><div class="app-btn-store">Google Play</div></div>
+        </a>
+        <a href="#" class="app-btn" onclick="showToast('iOS app coming soon! 🍎')">
+          <div class="app-btn-icon">🍎</div>
+          <div><div class="app-btn-label">DOWNLOAD ON THE</div><div class="app-btn-store">App Store</div></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="fbrand">
+        <a href="#" class="nav-logo" style="margin-bottom:4px;display:inline-flex;">
+          <div class="logo-mark">🐾</div>
+          <span class="logo-txt" style="color:#fff;">joyfully<span>.in</span></span>
+        </a>
+        <p>Guwahati's complete pet care platform. Everything your pet deserves — under one roof.</p>
+        <div class="fsocial">
+          <a class="fsoc-btn" href="#">📘</a><a class="fsoc-btn" href="#">📸</a>
+          <a class="fsoc-btn" href="#">💬</a><a class="fsoc-btn" href="#">▶️</a>
+        </div>
+      </div>
+      <div class="fcol"><h4>Services</h4><ul>
+        <li><a href="#booking">Pet Hostel</a></li><li><a href="#booking">Dog Grooming</a></li>
+        <li><a href="#booking">Vet Clinic</a></li><li><a href="#booking">Pet Adoption</a></li>
+        <li><a href="#booking">🕊️ Pet Burial</a></li>
+      </ul></div>
+      <div class="fcol"><h4>Company</h4><ul>
+        <li><a href="#">About Us</a></li><li><a href="#register-agency">List Your Business</a></li>
+        <li><a href="/admin">Admin Login</a></li><li><a href="#">Contact Us</a></li>
+      </ul></div>
+      <div class="fcol"><h4>Contact</h4><ul>
+        <li><a href="#">📍 Paltan Bazar, Guwahati</a></li>
+        <li><a href="tel:+919876543210">📞 +91 98765 43210</a></li>
+        <li><a href="mailto:hello@joyfully.in">📧 hello@joyfully.in</a></li>
+        <li><a href="#">⏰ Mon–Sat: 9AM–7PM</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 joyfully.in · All rights reserved · Guwahati, Assam, India</p>
+      <p><a href="#" style="color:var(--pl);">Privacy Policy</a> · <a href="#" style="color:var(--pl);">Terms</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp float -->
+<a href="https://wa.me/919876543210?text=Hi%20joyfully.in!%20I%27d%20like%20to%20book%20a%20service." class="wa-float" target="_blank">💬</a>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Login Modal -->
+<div class="modal-overlay hidden" id="loginModal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-family:'Baloo 2',cursive;font-size:22px;font-weight:900;">🐾 joyfully.in</div>
+      <button onclick="closeLoginModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);">✕</button>
+    </div>
+    <div class="login-tabs">
+      <div class="ltab active" onclick="switchLoginTab('login',this)">Sign In</div>
+      <div class="ltab" onclick="switchLoginTab('register',this)">Create Account</div>
+    </div>
+    <div id="loginFormContent">
+      <div id="regNameField" class="form-group" style="display:none;">
+        <label>Full Name</label><input id="lName" type="text" placeholder="Your full name"/>
+      </div>
+      <div class="form-group"><label>Email Address</label><input id="lEmail" type="email" placeholder="you@email.com"/></div>
+      <div class="form-group"><label>Password</label><input id="lPassword" type="password" placeholder="••••••••"/></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:15px;" id="loginSubmitBtn" onclick="handleLoginSubmit()">Sign In →</button>
+      <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px;">
+        Staff & Admin? Use the <a href="/admin" style="color:var(--p);font-weight:800;">Admin Panel</a> instead.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Full Store Modal -->
+<div class="modal-overlay hidden" id="fullStoreModal">
+  <div class="modal" style="max-width:800px;max-height:90vh;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;">🛒 Pet Store</div>
+      <button onclick="document.getElementById('fullStoreModal').classList.add('hidden')" style="background:none;border:none;font-size:22px;cursor:pointer;">✕</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;" id="fullStoreTabs">
+      <button class="btn btn-primary btn-sm" onclick="filterFullStore('all',this)">All</button>
+      <button class="btn btn-outline btn-sm" onclick="filterFullStore('food',this)">🍖 Food</button>
+      <button class="btn btn-outline btn-sm" onclick="filterFullStore('toys',this)">🎾 Toys</button>
+      <button class="btn btn-outline btn-sm" onclick="filterFullStore('grooming',this)">🪮 Grooming</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;max-height:60vh;overflow-y:auto;" id="fullStoreGrid"></div>
+    <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;font-weight:700;color:var(--mid);" id="cartSummaryText">Cart: 0 items</span>
+      <button class="btn btn-primary" onclick="openCartCheckout()">🛒 Checkout</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cart Checkout Modal -->
+<div class="modal-overlay hidden" id="cartModal">
+  <div class="modal" style="max-width:560px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;">🛒 Your Cart</div>
+      <button onclick="document.getElementById('cartModal').classList.add('hidden')" style="background:none;border:none;font-size:22px;cursor:pointer;">✕</button>
+    </div>
+    <div id="cartItemsContent"></div>
+  </div>
+</div>
+
+<script type="module">
+await new Promise(r => setTimeout(r, 900));
+const { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } = window.FIREBASE;
+const db = window.DB, auth = window.AUTH;
+
+// ── CART ──────────────────────────────────────────────────
+window._cart = [];
+function cartCount(){ return window._cart.reduce((s,i)=>s+i.qty,0); }
+function cartTotal(){ return window._cart.reduce((s,i)=>s+(i.price*i.qty),0); }
+function updateCartFloat(){
+  const existing = document.getElementById("cartFloatBtn");
+  if(existing) existing.remove();
+  if(cartCount()===0) return;
+  const btn = document.createElement("button");
+  btn.id = "cartFloatBtn"; btn.className = "cart-float";
+  btn.innerHTML = `🛒 Cart <span class="cart-badge">${cartCount()}</span> <span style="font-size:12px;opacity:.8;">₹${cartTotal().toLocaleString()}</span>`;
+  btn.onclick = openCartCheckout;
+  document.body.appendChild(btn);
+}
+
+// ── TOAST ─────────────────────────────────────────────────
+window.showToast = function(msg, type="") {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.className = `toast show ${type}`;
+  setTimeout(() => t.className = "toast", 3000);
+};
+
+// ── AUTH UI ───────────────────────────────────────────────
+window.updateAuthUI = function() {
+  const user = window.currentUser;
+  const loginBtn = document.getElementById("navLoginBtn");
+  const userInfo = document.getElementById("navUserInfo");
+  const userName = document.getElementById("navUserName");
+  if (user) {
+    if(loginBtn) loginBtn.style.display = "none";
+    if(userInfo) { userInfo.classList.add("visible"); }
+    if(userName) userName.textContent = user.email.split("@")[0];
+  } else {
+    if(loginBtn) loginBtn.style.display = "";
+    if(userInfo) userInfo.classList.remove("visible");
+  }
+};
+
+// ── NAV ───────────────────────────────────────────────────
+window.addEventListener("scroll", () => {
+  document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 40);
+  revealOnScroll();
+});
+document.getElementById("ham").addEventListener("click", () => document.getElementById("mobNav").classList.add("open"));
+document.getElementById("mobClose").addEventListener("click", () => document.getElementById("mobNav").classList.remove("open"));
+window.closeMob = () => document.getElementById("mobNav").classList.remove("open");
+
+// ── LOGIN MODAL ───────────────────────────────────────────
+window._loginMode = "login";
+window.openLoginModal = function(e) {
+  if(e) e.preventDefault();
+  document.getElementById("loginModal").classList.remove("hidden");
+};
+window.closeLoginModal = function() {
+  document.getElementById("loginModal").classList.add("hidden");
+};
+document.getElementById("loginModal").addEventListener("click", e => {
+  if(e.target === document.getElementById("loginModal")) closeLoginModal();
+});
+window.switchLoginTab = function(mode, el) {
+  window._loginMode = mode;
+  document.querySelectorAll(".ltab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");
+  document.getElementById("regNameField").style.display = mode === "register" ? "block" : "none";
+  document.getElementById("loginSubmitBtn").textContent = mode === "register" ? "Create Account →" : "Sign In →";
+};
+window.handleLoginSubmit = async function() {
+  const email = document.getElementById("lEmail").value.trim();
+  const password = document.getElementById("lPassword").value;
+  if (!email || !password) return showToast("Please fill all fields", "error");
+  try {
+    if (window._loginMode === "register") {
+      await createUserWithEmailAndPassword(auth, email, password);
+      // Save as customer in staff collection
+      const existingSnap = await getDocs(query(collection(db,"staff"), where("email","==",email)));
+      if (existingSnap.empty) {
+        const name = document.getElementById("lName")?.value?.trim() || email.split("@")[0];
+        await addDoc(collection(db,"staff"),{email, name, role:"customer", createdAt:serverTimestamp()});
+      }
+      showToast("Account created! Welcome to joyfully.in 🐾", "success");
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+      showToast("Welcome back! 🐾", "success");
+    }
+    closeLoginModal();
+    updateAuthUI();
+  } catch(e) {
+    showToast(e.message.replace("Firebase: ","").replace(/\(.*\)/,""), "error");
+  }
+};
+window.handleSignOut = async function() {
+  await signOut(auth);
+  updateAuthUI();
+  showToast("Signed out. See you soon! 🐾");
+};
+
+// ── LOAD AGENCIES ─────────────────────────────────────────
+window._agencyFilter = "all";
+async function loadAgencies() {
+  const grid = document.getElementById("agencyGrid");
+  if (!grid) return;
+  try {
+    const snap = await getDocs(query(collection(db, "agencies"), where("status","==","approved")));
+    let agencies = snap.docs.map(d=>({id:d.id,...d.data()}));
+    if (window._agencyFilter !== "all") agencies = agencies.filter(a=>a.type===window._agencyFilter);
+    if (!agencies.length) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted);">
+        <div style="font-size:48px;margin-bottom:12px;">🏢</div>
+        <p style="font-size:15px;">No agencies listed yet in this category.<br/>
+        <a href="#register-agency" style="color:var(--p);font-weight:800;">Be the first to list your business →</a></p>
+      </div>`;
+      return;
+    }
+    const typeEmoji = {hostel:"🏠",grooming:"✂️",vet:"🩺",adoption:"❤️",burial:"🕊️",breeder:"🐾",multi:"🐾"};
+    const typeBg = {hostel:"#e0f2f1",grooming:"#fce4ec",vet:"#e8f5e9",adoption:"#f3e5f5",burial:"#f0f0f0",breeder:"#fff8e1",multi:"#e8f0fe"};
+    grid.innerHTML = agencies.map(a=>`
+      <div class="agency-card reveal">
+        <div class="agency-img" style="background:${typeBg[a.type]||"#f5f5f5"};">
+          <span style="font-size:60px;">${typeEmoji[a.type]||"🐾"}</span>
+          <span class="agency-badge">✅ Verified</span>
+        </div>
+        <div class="agency-body">
+          <div class="agency-name">${a.name||"Agency"}</div>
+          <div class="agency-type">${a.city||"Guwahati"} · ${a.type||"Pet Service"}</div>
+          <div class="agency-tags">
+            ${a.type==="hostel"?'<span class="atag">Pet Hostel</span>':""}
+            ${a.type==="grooming"?'<span class="atag">Dog Grooming</span>':""}
+            ${a.type==="vet"?'<span class="atag">Vet Clinic</span>':""}
+            ${a.type==="burial"?'<span class="atag">🕊️ Memorial Services</span>':""}
+            ${a.years?`<span class="atag">${a.years} yrs</span>`:""}
+            <span class="atag">Book Now</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="agency-rating">
+              <span class="stars">⭐</span>
+              <span>${a.rating||"New"}</span>
+              <span style="color:var(--muted);font-weight:400;font-size:12px;">(${a.reviews||0} reviews)</span>
+            </div>
+            <a href="#booking" class="btn btn-primary btn-sm">Book</a>
+          </div>
+        </div>
+      </div>`).join("");
+    revealOnScroll();
+  } catch(e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">
+      <p>Could not load agencies. <a href="#register-agency" style="color:var(--p);">Register yours →</a></p>
+    </div>`;
+  }
+}
+
+window.filterAgencies = function(type, btn) {
+  window._agencyFilter = type;
+  document.querySelectorAll("#agencyFilterTabs button").forEach(b => {
+    b.className = "btn btn-outline btn-sm";
+  });
+  btn.className = "btn btn-primary btn-sm";
+  loadAgencies();
+};
+
+// ── LOAD STORE PRODUCTS ───────────────────────────────────
+window._allProducts = [];
+window._fullStoreFilter = "all";
+
+async function loadStoreProducts() {
+  try {
+    const snap = await getDocs(collection(db, "products"));
+    window._allProducts = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderMiniProducts(window._allProducts.slice(0,8));
+  } catch(e) {
+    document.getElementById("storeProducts").innerHTML = `<div style="color:var(--muted);padding:20px;">Could not load products</div>`;
+  }
+}
+
+function renderMiniProducts(prods) {
+  const cont = document.getElementById("storeProducts");
+  if (!prods.length) { cont.innerHTML = `<div style="color:var(--muted);padding:20px;font-size:14px;">No products listed yet.</div>`; return; }
+  cont.innerHTML = prods.map(p=>`
+    <div class="prod-mini reveal">
+      <div class="prod-mini-img" style="background:linear-gradient(135deg,${p.category==='food'?'#e3f2fd,#bbdefb':p.category==='toys'?'#f3e5f5,#e1bee7':'#e8f5e9,#c8e6c9'});">
+        ${p.tag?`<span style="position:absolute;top:8px;left:8px;background:var(--acc);color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:20px;">${p.tag}</span>`:""}
+        ${p.images&&p.images[0]?`<img src="${p.images[0]}" style="width:100%;height:100%;object-fit:cover;"/>`:`<span>${p.emoji||"📦"}</span>`}
+      </div>
+      <div class="prod-mini-body">
+        <h4>${p.name}</h4>
+        <div class="prod-mini-footer">
+          <div class="prod-price">₹${p.price?.toLocaleString()}</div>
+          <button class="add-cart-btn" onclick="addToCartPub('${p.id}','${(p.name||'').replace(/'/g,"\\'")}',${p.price},'${p.emoji||"📦"}')">+ Cart</button>
+        </div>
+      </div>
+    </div>`).join("");
+  revealOnScroll();
+}
+
+window.addToCartPub = function(id,name,price,emoji) {
+  const ex = window._cart.find(i=>i.id===id);
+  if(ex){ex.qty++;}else{window._cart.push({id,name,price:Number(price),emoji,qty:1});}
+  updateCartFloat();
+  showToast(`${emoji} ${name} added! 🛒`, "success");
+  updateCartSummary();
+};
+
+function updateCartSummary() {
+  const el = document.getElementById("cartSummaryText");
+  if(el) el.textContent = `Cart: ${cartCount()} item${cartCount()!==1?"s":""} · ₹${cartTotal().toLocaleString()}`;
+}
+
+window.openFullStore = function() {
+  document.getElementById("fullStoreModal").classList.remove("hidden");
+  renderFullStore("all");
+};
+
+window.filterFullStore = function(f,btn) {
+  window._fullStoreFilter = f;
+  document.querySelectorAll("#fullStoreTabs button").forEach(b=>b.className="btn btn-outline btn-sm");
+  btn.className="btn btn-primary btn-sm";
+  renderFullStore(f);
+};
+
+function renderFullStore(filter) {
+  const prods = filter==="all"?window._allProducts:window._allProducts.filter(p=>p.category===filter);
+  const grid = document.getElementById("fullStoreGrid");
+  if(!grid)return;
+  grid.innerHTML = prods.map(p=>`
+    <div style="background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--border);">
+      <div style="height:120px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,${p.category==='food'?'#e3f2fd,#bbdefb':p.category==='toys'?'#f3e5f5,#e1bee7':'#e8f5e9,#c8e6c9'});">
+        ${p.images&&p.images[0]?`<img src="${p.images[0]}" style="width:100%;height:100%;object-fit:cover;"/>`:`${p.emoji||"📦"}`}
+      </div>
+      <div style="padding:10px 12px 12px;">
+        <div style="font-weight:800;font-size:13px;margin-bottom:8px;line-height:1.3;">${p.name}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Baloo 2',cursive;font-size:16px;font-weight:900;color:var(--p);">₹${p.price?.toLocaleString()}</div>
+          <button style="background:var(--p);color:#fff;border:none;border-radius:8px;padding:6px 11px;font-weight:800;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;" onclick="addToCartPub('${p.id}','${(p.name||'').replace(/'/g,"\\'")}',${p.price},'${p.emoji||"📦"}')">+ Cart</button>
+        </div>
+      </div>
+    </div>`).join("") || `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">No products in this category yet</div>`;
+  updateCartSummary();
+}
+
+window.openCartCheckout = function() {
+  if(!window._cart.length) { showToast("Your cart is empty","error"); return; }
+  document.getElementById("fullStoreModal").classList.add("hidden");
+  const modal = document.getElementById("cartModal");
+  const content = document.getElementById("cartItemsContent");
+  const delivery = cartTotal() >= 499 ? 0 : 50;
+  content.innerHTML = `
+    <div style="max-height:280px;overflow-y:auto;margin-bottom:14px;">
+      ${window._cart.map(item=>`
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:28px;width:44px;height:44px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${item.emoji||"📦"}</span>
+          <div style="flex:1;"><div style="font-weight:800;font-size:13px;">${item.name}</div><div style="font-size:12px;color:var(--muted);">₹${item.price.toLocaleString()} each</div></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button onclick="updatePubQty('${item.id}',-1)" style="background:var(--bg);border:none;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:15px;font-weight:900;">−</button>
+            <span style="font-weight:800;">${item.qty}</span>
+            <button onclick="updatePubQty('${item.id}',1)" style="background:var(--bg);border:none;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:15px;font-weight:900;">+</button>
+          </div>
+          <div style="font-weight:900;color:var(--p);font-size:14px;min-width:65px;text-align:right;">₹${(item.price*item.qty).toLocaleString()}</div>
+        </div>`).join("")}
+    </div>
+    <div style="background:var(--bg);border-radius:12px;padding:14px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Subtotal</span><span style="font-weight:800;">₹${cartTotal().toLocaleString()}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:${delivery===0?"var(--green)":"var(--mid)"};margin-bottom:6px;"><span>Delivery</span><span style="font-weight:800;">${delivery===0?"FREE":"₹"+delivery}</span></div>
+      ${cartTotal()<499?`<div style="font-size:11px;color:var(--muted);">Add ₹${499-cartTotal()} more for FREE delivery</div>`:""}
+      <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:900;border-top:1px solid var(--border);padding-top:8px;margin-top:8px;"><span>Total</span><span style="color:var(--p);">₹${(cartTotal()+delivery).toLocaleString()}</span></div>
+    </div>
+    <div class="form-group"><label style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:6px;display:block;">Delivery Address *</label><textarea id="cartAddr" placeholder="Your full address in Guwahati…" style="width:100%;border:2px solid var(--border);border-radius:11px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;resize:none;height:70px;"></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="form-group"><label style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:6px;display:block;">Your Name *</label><input id="cartName" placeholder="Full name" style="width:100%;border:2px solid var(--border);border-radius:11px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;"/></div>
+      <div class="form-group"><label style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:6px;display:block;">WhatsApp *</label><input id="cartPhone" placeholder="+91 98765 43210" style="width:100%;border:2px solid var(--border);border-radius:11px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;"/></div>
+    </div>
+    <div class="form-group"><label style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:6px;display:block;">Payment Method</label>
+      <select id="cartPay" style="width:100%;border:2px solid var(--border);border-radius:11px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;background:#fff;">
+        <option value="cod">💵 Cash on Delivery</option><option value="upi">📱 UPI on Delivery</option><option value="online">💳 Online Transfer</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:15px;margin-top:4px;" onclick="placePubOrder()">Place Order 🛒</button>`;
+  modal.classList.remove("hidden");
+
+  window.updatePubQty = function(id,delta){
+    const item=window._cart.find(i=>i.id===id);
+    if(!item)return;
+    item.qty=Math.max(0,item.qty+delta);
+    if(item.qty===0) window._cart=window._cart.filter(i=>i.id!==id);
+    updateCartFloat();
+    if(window._cart.length) openCartCheckout(); else modal.classList.add("hidden");
+  };
+};
+document.getElementById("cartModal").addEventListener("click",e=>{if(e.target===document.getElementById("cartModal"))document.getElementById("cartModal").classList.add("hidden");});
+
+window.placePubOrder = async function() {
+  const addr=document.getElementById("cartAddr")?.value?.trim();
+  const name=document.getElementById("cartName")?.value?.trim();
+  const phone=document.getElementById("cartPhone")?.value?.trim();
+  if(!addr||!name||!phone) return showToast("Please fill name, phone & address","error");
+  const delivery=cartTotal()>=499?0:50;
+  try {
+    await addDoc(collection(db,"orders"),{
+      customerName:name, customerPhone:phone,
+      customerEmail:window.currentUser?.email||"",
+      items:window._cart.map(i=>({id:i.id,name:i.name,price:i.price,qty:i.qty,emoji:i.emoji||"📦"})),
+      address:addr, payment:document.getElementById("cartPay")?.value||"cod",
+      subtotal:cartTotal(), delivery, total:cartTotal()+delivery,
+      status:"pending", createdAt:serverTimestamp(), source:"website"
+    });
+    window._cart=[]; updateCartFloat();
+    document.getElementById("cartModal").classList.add("hidden");
+    showToast("Order placed! We'll confirm via WhatsApp 🎉","success");
+  } catch(e){ showToast("Error: "+e.message,"error"); }
+};
+
+// ── PUBLIC BOOKING FORM ───────────────────────────────────
+document.getElementById("bService").addEventListener("change", function(){
+  document.getElementById("hostelExtras").style.display = this.value==="hostel"?"block":"none";
+  document.getElementById("burialExtras").style.display = this.value==="burial"?"block":"none";
+});
+
+window.submitPublicBooking = async function() {
+  const service=document.getElementById("bService").value;
+  const name=document.getElementById("bName").value.trim();
+  const phone=document.getElementById("bPhone").value.trim();
+  const petName=document.getElementById("bPetName").value.trim();
+  if(!service||!name||!phone||!petName) return showToast("Please fill all required fields","error");
+  try {
+    await addDoc(collection(db,"bookings"),{
+      service: {hostel:"🏠 Pet Hostel",grooming:"✂️ Dog Grooming",vet:"🩺 Vet Appointment",adoption:"❤️ Adoption Enquiry",breeder:"🐾 Breeder Enquiry",store:"🛒 Store Order",burial:"🕊️ Pet Burial"}[service]||service,
+      serviceKey:service,
+      customerName:name, customerPhone:phone,
+      customerEmail:window.currentUser?.email||"",
+      petName, date:document.getElementById("bDate").value,
+      checkIn:document.getElementById("bCheckIn")?.value||"",
+      nights:document.getElementById("bNights")?.value||"",
+      burialType:document.getElementById("bBurialType")?.value||"",
+      notes:document.getElementById("bNotes").value.trim(),
+      status:"pending", createdAt:serverTimestamp(), source:"website"
+    });
+    document.getElementById("bookingFormContent").style.display="none";
+    document.getElementById("bookingSuccess").classList.add("show");
+  } catch(e){ showToast("Error: "+e.message,"error"); }
+};
+
+window.resetBookingForm = function() {
+  document.getElementById("bookingFormContent").style.display="block";
+  document.getElementById("bookingSuccess").classList.remove("show");
+  document.getElementById("bService").value="";
+  document.getElementById("bName").value="";
+  document.getElementById("bPhone").value="";
+  document.getElementById("bPetName").value="";
+  document.getElementById("bNotes").value="";
+};
+
+// ── AGENCY REGISTRATION ───────────────────────────────────
+window.submitAgencyReg = async function() {
+  const name=document.getElementById("agName").value.trim();
+  const type=document.getElementById("agType").value;
+  const city=document.getElementById("agCity").value.trim();
+  const owner=document.getElementById("agOwner").value.trim();
+  const phone=document.getElementById("agPhone").value.trim();
+  const email=document.getElementById("agEmail").value.trim();
+  if(!name||!type||!owner||!phone||!email) return showToast("Please fill all required fields","error");
+  try {
+    await addDoc(collection(db,"agencies"),{
+      name, type, city, ownerName:owner, phone, email,
+      description:document.getElementById("agDesc").value,
+      years:document.getElementById("agYears").value,
+      status:"pending", rating:0, reviews:0,
+      createdAt:serverTimestamp()
+    });
+    document.getElementById("agencyRegContent").style.display="none";
+    document.getElementById("agencyRegSuccess").classList.add("show");
+    showToast("Registration submitted! We'll contact you within 24 hours 🐾","success");
+  } catch(e){ showToast("Error: "+e.message,"error"); }
+};
+
+// ── SCROLL REVEAL ─────────────────────────────────────────
+function isInVP(el){ const r=el.getBoundingClientRect(); return r.top < window.innerHeight-60; }
+function revealOnScroll(){ document.querySelectorAll(".reveal:not(.visible)").forEach(el=>{ if(isInVP(el)) el.classList.add("visible"); }); }
+window.revealOnScroll = revealOnScroll;
+
+// ── INIT ──────────────────────────────────────────────────
+loadAgencies();
+loadStoreProducts();
+revealOnScroll();
+window.addEventListener("load", revealOnScroll);
+</script>
+</body>
+</html>
