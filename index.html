@@ -824,18 +824,18 @@ window.handleSignOut = async function() {
 };
 
 // ── LOAD AGENCIES ─────────────────────────────────────────
-window._partnerFilter = "all";
+window._agencyFilter = "all";
 async function loadPartners() {
   const grid = document.getElementById("agencyGrid");
   if (!grid) return;
   try {
     const snap = await getDocs(query(collection(db, "partners"), where("status","==","approved")));
     let partners = snap.docs.map(d=>({id:d.id,...d.data()}));
-    if (window._partnerFilter !== "all") agencies = agencies.filter(a=>a.type===window._partnerFilter);
+    if (window._agencyFilter !== "all") agencies = agencies.filter(a=>a.type===window._agencyFilter);
     if (!partners.length) {
       grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted);">
         <div style="font-size:48px;margin-bottom:12px;">🏢</div>
-        <p style="font-size:15px;">No partners listed yet in this category.<br/>
+        <p style="font-size:15px;">No partners listed yet.<br/>
         <a href="#register-agency" style="color:var(--p);font-weight:800;">Be the first to list your business →</a></p>
       </div>`;
       return;
@@ -856,7 +856,7 @@ async function loadPartners() {
             ${p.type==="grooming"?'<span class="atag">Dog Grooming</span>':""}
             ${p.type==="vet"?'<span class="atag">Vet Clinic</span>':""}
             ${p.type==="burial"?'<span class="atag">🕊️ Memorial Services</span>':""}
-            ${p.tier && p.tier!=="basic"?`<span class="atag">${p.tier</span>`:""}
+            ${p.tier && p.tier!=="basic"?`<span class="atag">${p.tier}</span>`:""}
             <span class="atag">Book Now</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -878,7 +878,7 @@ async function loadPartners() {
 }
 
 window.filterPartners = function(type, btn) {
-  window._partnerFilter = type;
+  window._agencyFilter = type;
   document.querySelectorAll("#partnerFilterTabs button").forEach(b => {
     b.className = "btn btn-outline btn-sm";
   });
