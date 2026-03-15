@@ -169,17 +169,14 @@ nav.scrolled .nav-links a:hover{color:var(--p);}
 /* ── STORE PREVIEW ── */
 .products-scroll{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;padding:4px 0 12px;}
 .prod-mini{background:#fff;border-radius:18px;overflow:hidden;border:1px solid var(--border);transition:all .3s;}
-.prod-mini:hover{transform:translateY(-5px);box-shadow:var(--shadow);}
-.prod-mini-img{height:180px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;overflow:hidden;}
-.prod-mini-img img{width:100%;height:100%;object-fit:cover;}
-.prod-mini-body{padding:14px 16px 16px;}
+.prod-mini:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+.prod-mini-img{height:180px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;overflow:hidden;}.prod-mini-img img{width:100%;height:100%;object-fit:cover;}.prod-cat-badge{display:inline-block;background:var(--bg);color:var(--muted);font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;margin-bottom:4px;}
+.prod-mini-body{padding:12px 14px 14px;}
 .prod-mini-body h4{font-size:13px;font-weight:800;color:var(--dark);margin-bottom:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.prod-mini-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
-.prod-price{font-family:'Baloo 2',cursive;font-size:20px;font-weight:900;color:var(--p);}
-.add-cart-btn{background:var(--p);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:800;font-size:12px;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;white-space:nowrap;}
-.add-cart-btn:hover{background:var(--p2);transform:scale(1.05);}
-.prod-tag{position:absolute;top:10px;left:10px;background:var(--acc);color:#fff;font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;}
-.prod-cat-badge{display:inline-block;background:var(--bg);color:var(--muted);font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;margin-bottom:6px;}
+.prod-mini-footer{display:flex;align-items:center;justify-content:space-between;}
+.prod-price{font-family:'Baloo 2',cursive;font-size:18px;font-weight:900;color:var(--p);}
+.add-cart-btn{background:var(--p);color:#fff;border:none;border-radius:10px;padding:7px 12px;font-weight:800;font-size:12px;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;}
+.add-cart-btn:hover{background:var(--p2);}
 /* ── CART FLOAT ── */
 .cart-float{position:fixed;bottom:24px;right:24px;background:var(--p);color:#fff;border:none;border-radius:50px;padding:13px 20px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 8px 28px rgba(108,92,231,.4);z-index:150;display:flex;align-items:center;gap:8px;transition:all .2s;}
 .cart-float:hover{transform:translateY(-2px);}
@@ -281,7 +278,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
     </a>
     <ul class="nav-links">
       <li><a href="#services">Services</a></li>
-      <li><a href="#agencies">Find Agencies</a></li>
+      <li><a href="#partners">Find Partners</a></li>
       <li><a href="#store">Store</a></li>
       <li><a href="#booking">Book Now</a></li>
       <li><a href="#register-agency">List Your Business</a></li>
@@ -301,7 +298,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
 <div class="mob-nav" id="mobNav">
   <button class="mob-close" id="mobClose">✕</button>
   <a href="#services" onclick="closeMob()">Services</a>
-  <a href="#agencies" onclick="closeMob()">Find Agencies</a>
+  <a href="#partners" onclick="closeMob()">Find Partners</a>
   <a href="#store" onclick="closeMob()">Store</a>
   <a href="#booking" onclick="closeMob()">Book Now</a>
   <a href="#register-agency" onclick="closeMob()">List Your Business</a>
@@ -322,7 +319,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
       <p>Book grooming, hostel stays, vet visits, adoption, burial services & more — all from one trusted platform in Assam.</p>
       <div class="hero-btns">
         <a href="#booking" class="btn btn-primary" style="font-size:16px;padding:15px 30px;">Book a Service 🐾</a>
-        <a href="#agencies" class="btn btn-white" style="font-size:16px;padding:15px 30px;">Find Agencies</a>
+        <a href="#partners" class="btn btn-white" style="font-size:16px;padding:15px 30px;">Find Partners</a>
       </div>
       <div class="hero-stats">
         <div class="hst"><div class="hst-v">500+</div><div class="hst-l">Happy Pets</div></div>
@@ -392,27 +389,27 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
 </section>
 
 <!-- ── LISTED AGENCIES ────────────────────────────────── -->
-<section id="agencies" class="section" style="background:#fff;">
+<section id="partners" class="section" style="background:#fff;">
   <div class="container">
     <div class="section-head reveal">
-      <div class="tag">🏢 Verified Agencies</div>
-      <h2>Find Trusted Pet Service Providers</h2>
-      <p>All agencies on joyfully.in are verified. Browse by service and book instantly.</p>
+      <div class="tag">🤝 Verified Partners</div>
+      <h2>Find Trusted Pet Service Partners</h2>
+      <p>All partners on joyfully.in are verified. Browse by service and book instantly.</p>
     </div>
     <!-- Filter tabs -->
-    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;" id="agencyFilterTabs">
-      <button class="btn btn-primary btn-sm" onclick="filterAgencies('all',this)">All</button>
-      <button class="btn btn-outline btn-sm" onclick="filterAgencies('hostel',this)">🏠 Hostel</button>
-      <button class="btn btn-outline btn-sm" onclick="filterAgencies('grooming',this)">✂️ Grooming</button>
-      <button class="btn btn-outline btn-sm" onclick="filterAgencies('vet',this)">🩺 Vet</button>
-      <button class="btn btn-outline btn-sm" onclick="filterAgencies('adoption',this)">❤️ Adoption</button>
-      <button class="btn btn-outline btn-sm" onclick="filterAgencies('burial',this)">🕊️ Burial</button>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;" id="partnerFilterTabs">
+      <button class="btn btn-primary btn-sm" onclick="filterPartners('all',this)">All</button>
+      <button class="btn btn-outline btn-sm" onclick="filterPartners('hostel',this)">🏠 Hostel</button>
+      <button class="btn btn-outline btn-sm" onclick="filterPartners('grooming',this)">✂️ Grooming</button>
+      <button class="btn btn-outline btn-sm" onclick="filterPartners('vet',this)">🩺 Vet</button>
+      <button class="btn btn-outline btn-sm" onclick="filterPartners('adoption',this)">❤️ Adoption</button>
+      <button class="btn btn-outline btn-sm" onclick="filterPartners('burial',this)">🕊️ Burial</button>
     </div>
-    <div class="agency-grid" id="agencyGrid">
+    <div class="agency-grid" id="partnerGrid">
       <!-- Loaded from Firebase -->
       <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">
         <div style="font-size:40px;margin-bottom:12px;">⏳</div>
-        <p>Loading agencies…</p>
+        <p>Loading partners…</p>
       </div>
     </div>
   </div>
@@ -427,7 +424,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
       <p>Vet-approved food, toys & grooming essentials. Free delivery in Guwahati on orders above ₹499.</p>
     </div>
     <div class="products-scroll" id="storeProducts">
-      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">⏳ Loading products…</div>
+      <div style="text-align:center;padding:40px;color:var(--muted);width:100%;">⏳ Loading products…</div>
     </div>
     <div style="text-align:center;margin-top:28px;" class="reveal">
       <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">🚚 Free delivery in Guwahati on orders above ₹499</p>
@@ -827,27 +824,27 @@ window.handleSignOut = async function() {
 };
 
 // ── LOAD AGENCIES ─────────────────────────────────────────
-window._agencyFilter = "all";
-async function loadAgencies() {
+window._partnerFilter = "all";
+async function loadPartners() {
   const grid = document.getElementById("agencyGrid");
   if (!grid) return;
   try {
-    const snap = await getDocs(query(collection(db, "agencies"), where("status","==","approved")));
-    let agencies = snap.docs.map(d=>({id:d.id,...d.data()}));
-    if (window._agencyFilter !== "all") agencies = agencies.filter(a=>a.type===window._agencyFilter);
-    if (!agencies.length) {
+    const snap = await getDocs(query(collection(db, "partners"), where("status","==","approved")));
+    let partners = snap.docs.map(d=>({id:d.id,...d.data()}));
+    if (window._partnerFilter !== "all") agencies = agencies.filter(a=>a.type===window._partnerFilter);
+    if (!partners.length) {
       grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted);">
         <div style="font-size:48px;margin-bottom:12px;">🏢</div>
-        <p style="font-size:15px;">No agencies listed yet in this category.<br/>
+        <p style="font-size:15px;">No partners listed yet in this category.<br/>
         <a href="#register-agency" style="color:var(--p);font-weight:800;">Be the first to list your business →</a></p>
       </div>`;
       return;
     }
     const typeEmoji = {hostel:"🏠",grooming:"✂️",vet:"🩺",adoption:"❤️",burial:"🕊️",breeder:"🐾",multi:"🐾"};
     const typeBg = {hostel:"#e0f2f1",grooming:"#fce4ec",vet:"#e8f5e9",adoption:"#f3e5f5",burial:"#f0f0f0",breeder:"#fff8e1",multi:"#e8f0fe"};
-    grid.innerHTML = agencies.map(a=>`
+    grid.innerHTML = partners.map(p=>`
       <div class="agency-card reveal">
-        <div class="agency-img" style="background:${typeBg[a.type]||"#f5f5f5"};">
+        <div class="agency-img" style="background:${typeBg[p.type]||"#f5f5f5"};">
           <span style="font-size:60px;">${typeEmoji[a.type]||"🐾"}</span>
           <span class="agency-badge">✅ Verified</span>
         </div>
@@ -880,14 +877,13 @@ async function loadAgencies() {
   }
 }
 
-window.filterAgencies = function(type, btn) {
-  window._agencyFilter = type;
-  document.querySelectorAll("#agencyFilterTabs button").forEach(b => {
+window.filterPartners = function(type, btn) {
+  window._partnerFilter = type;
+  document.querySelectorAll("#partnerFilterTabs button").forEach(b => {
     b.className = "btn btn-outline btn-sm";
   });
   btn.className = "btn btn-primary btn-sm";
-  window._partnerFilter = "all";
-loadPartners();
+  loadPartners();
 };
 
 // ── LOAD STORE PRODUCTS ───────────────────────────────────
@@ -1090,7 +1086,7 @@ window.submitAgencyReg = async function() {
   const email=document.getElementById("agEmail").value.trim();
   if(!name||!type||!owner||!phone||!email) return showToast("Please fill all required fields","error");
   try {
-    await addDoc(collection(db,"agencies"),{
+    await addDoc(collection(db,"partners"),{
       name, type, city, ownerName:owner, phone, email,
       description:document.getElementById("agDesc").value,
       years:document.getElementById("agYears").value,
@@ -1109,7 +1105,8 @@ function revealOnScroll(){ document.querySelectorAll(".reveal:not(.visible)").fo
 window.revealOnScroll = revealOnScroll;
 
 // ── INIT ──────────────────────────────────────────────────
-loadAgencies();
+window._partnerFilter = "all";
+loadPartners();
 loadStoreProducts();
 revealOnScroll();
 window.addEventListener("load", revealOnScroll);
