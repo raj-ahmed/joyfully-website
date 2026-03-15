@@ -30,7 +30,10 @@ window.currentUser = null;
 
 onAuthStateChanged(auth, async (user) => {
   window.currentUser = user;
-  updateAuthUI();
+  window._firebaseReady = true;
+  if (typeof updateAuthUI === 'function') updateAuthUI();
+  if (typeof loadPartners === 'function') { window._partnerFilter = window._partnerFilter||"all"; loadPartners(); }
+  if (typeof loadStoreProducts === 'function') loadStoreProducts();
 });
 </script>
 
@@ -724,14 +727,8 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
 </div>
 
 <script type="module">
-await new Promise(r => setTimeout(r, 900));
-// Wait for Firebase to be ready from first script
-let _attempts = 0;
-while (!window.DB && _attempts < 50) {
-  await new Promise(r => setTimeout(r, 50));
-  _attempts++;
-}
-const { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } = window.FIREBASE;
+// Get Firebase from global (set by first script)
+const { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } = window.FIREBASE || {};
 const db = window.DB, auth = window.AUTH;
 
 // ── CART ──────────────────────────────────────────────────
@@ -774,9 +771,7 @@ window.updateAuthUI = function() {
 
 // ── NAV ───────────────────────────────────────────────────
 window.addEventListener("scroll", () => {
-  const _n = document.getElementById("navbar");
-  _n.classList.toggle("scrolled", window.scrollY > 40);
-  _n.classList.toggle("on-hero", window.scrollY < 80);
+  const _n=document.getElementById("navbar");_n.classList.toggle("scrolled",window.scrollY>40);_n.classList.toggle("on-hero",window.scrollY<80);
   revealOnScroll();
 });
 document.getElementById("ham").addEventListener("click", () => document.getElementById("mobNav").classList.add("open"));
@@ -892,7 +887,7 @@ window.filterPartners = function(type, btn) {
     b.className = "btn btn-outline btn-sm";
   });
   btn.className = "btn btn-primary btn-sm";
-  loadPartners();
+  loadAgencies();
 };
 
 // ── LOAD STORE PRODUCTS ───────────────────────────────────
@@ -1114,9 +1109,12 @@ function revealOnScroll(){ document.querySelectorAll(".reveal:not(.visible)").fo
 window.revealOnScroll = revealOnScroll;
 
 // ── INIT ──────────────────────────────────────────────────
-window._partnerFilter = "all";
-loadPartners();
-loadStoreProducts();
+// Only load data if Firebase already initialized, otherwise auth listener handles it
+if (window._firebaseReady) {
+  window._partnerFilter = "all";
+  loadPartners();
+  loadStoreProducts();
+}
 revealOnScroll();
 window.addEventListener("load", revealOnScroll);
 const _nb = document.getElementById("navbar");
