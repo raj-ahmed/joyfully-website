@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>joyfully.in – Partner Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#f0f4ff;color:#1e1b2e;min-height:100vh;}
+:root{--p:#6C5CE7;--pl:#a29bfe;--p2:#4834d4;--acc:#fd79a8;--gold:#fdcb6e;--dark:#1e1b2e;--mid:#5a5475;--muted:#9892b0;--bg:#f0f4ff;--card:#fff;--border:#ede9ff;--green:#00b894;--red:#d63031;--orange:#e17055;--shadow:0 4px 24px rgba(108,92,231,.10);--r:16px;}
+.shell{display:flex;min-height:100vh;}
+.sidebar{width:250px;background:#1e1b2e;flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto;}
+.sidebar::-webkit-scrollbar{width:4px;}.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px;}
+.main{margin-left:250px;flex:1;min-height:100vh;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--dark);}
+.content{padding:28px;}
+.sb-logo{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-logo h1{font-family:'Baloo 2',cursive;font-size:18px;font-weight:900;color:#fff;}
+.sb-logo h1 span{color:var(--pl);}
+.sb-logo p{font-size:10px;color:rgba(255,255,255,.3);margin-top:2px;}
+.sb-partner{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-partner-name{font-size:13px;font-weight:800;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sb-partner-type{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;}
+.tier-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;margin-top:4px;}
+.tier-basic{background:rgba(156,163,175,.2);color:#9ca3af;}.tier-verified{background:rgba(52,211,153,.2);color:#34d399;}.tier-premium{background:rgba(253,203,110,.2);color:#fdcb6e;}
+.nav-sec{padding:14px 12px 6px;font-size:10px;font-weight:800;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;cursor:pointer;color:rgba(255,255,255,.6);font-size:13px;font-weight:700;transition:all .2s;border-radius:10px;margin:2px 8px;}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}.nav-item.active{background:var(--p);color:#fff;}
+.nav-item .ni{font-size:16px;width:20px;text-align:center;}
+.sb-footer{padding:16px;border-top:1px solid rgba(255,255,255,.08);}
+.sign-out-btn{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.sign-out-btn:hover{background:rgba(213,63,63,.2);color:#ff7675;}
+.card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow);}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-header h3{font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;color:var(--dark);}
+.card-body{padding:20px;}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px;}
+.stat-card{background:#fff;border-radius:var(--r);padding:18px;border:1px solid var(--border);position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.s1::before{background:linear-gradient(90deg,var(--p),var(--pl));}.s2::before{background:linear-gradient(90deg,var(--acc),#fd79a855);}.s3::before{background:linear-gradient(90deg,var(--green),#00b89455);}.s4::before{background:linear-gradient(90deg,var(--gold),#fdcb6e55);}.s5::before{background:linear-gradient(90deg,#00cec9,#00cec955);}
+.stat-em{font-size:26px;margin-bottom:8px;}.stat-val{font-family:'Baloo 2',cursive;font-size:30px;font-weight:900;color:var(--dark);}.stat-label{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px;}
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:10px;padding:9px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--p);color:#fff;}.btn-primary:hover{background:var(--p2);}
+.btn-success{background:var(--green);color:#fff;}.btn-danger{background:var(--red);color:#fff;}
+.btn-ghost{background:var(--bg);color:var(--mid);border:1px solid var(--border);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{margin-bottom:14px;}
+label{display:block;font-size:12px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+input,select,textarea{width:100%;border:2px solid var(--border);border-radius:10px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--dark);outline:none;transition:border-color .2s;background:#fff;}
+input:focus,select:focus,textarea:focus{border-color:var(--p);}
+textarea{resize:vertical;min-height:80px;}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;}
+.badge-pending{background:#fff3e0;color:#e65100;}.badge-approved{background:#e8f5e9;color:#2e7d32;}.badge-confirmed{background:#e8f5e9;color:#2e7d32;}
+.badge-suspended{background:#ffebee;color:#c62828;}.badge-rejected{background:#ffebee;color:#c62828;}.badge-cancelled{background:#ffebee;color:#c62828;}.badge-completed{background:#e3f2fd;color:#1565c0;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{background:#f8f7ff;padding:11px 16px;text-align:left;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;border-bottom:2px solid var(--border);}
+td{padding:13px 16px;border-bottom:1px solid var(--border);font-size:13px;}
+tr:last-child td{border-bottom:none;}tr:hover td{background:#faf9ff;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px;}
+.cal-day-name{text-align:center;font-size:11px;font-weight:800;color:var(--muted);padding:5px 0;}
+.cal-day{border-radius:9px;padding:7px 4px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;min-height:48px;border:2px solid transparent;}
+.cal-day.empty{background:transparent;cursor:default;}.cal-day.available{background:#e8f5e9;color:#2e7d32;}.cal-day.booked{background:#ffebee;color:#c62828;cursor:default;}.cal-day.blocked{background:#f5f5f5;color:#9e9e9e;cursor:default;}.cal-day.today{border-color:var(--p);}
+.slc-header{padding:16px;display:flex;justify-content:space-between;align-items:flex-start;}
+.toast{position:fixed;bottom:24px;right:24px;background:#1e1b2e;color:#fff;padding:13px 22px;border-radius:13px;font-weight:700;font-size:13px;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;}
+.toast.show{transform:translateY(0);opacity:1;}.toast.success{background:var(--green);}.toast.error{background:var(--red);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.hidden{display:none;}.modal{background:#fff;border-radius:22px;padding:28px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;}
+.modal h3{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;margin-bottom:20px;}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}.empty .em{font-size:48px;margin-bottom:12px;}
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e1b2e,#302b63);}
+.auth-box{background:#fff;border-radius:24px;padding:40px;width:100%;max-width:460px;box-shadow:0 24px 80px rgba(0,0,0,.3);}
+.auth-tabs{display:flex;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:22px;}
+.atab{flex:1;padding:10px;text-align:center;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;color:var(--muted);transition:all .2s;}
+.atab.active{background:#fff;color:var(--p);box-shadow:var(--shadow);}
+.pending-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e1b2e,#302b63);}
+.ftabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.ftab{padding:7px 16px;border-radius:50px;border:2px solid var(--border);background:#fff;font-weight:700;font-size:12px;cursor:pointer;color:var(--muted);transition:all .2s;}
+.ftab.active{background:var(--p);color:#fff;border-color:var(--p);}
+.rev-bar{height:32px;border-radius:6px;background:linear-gradient(90deg,var(--p),var(--pl));display:flex;align-items:center;padding-right:10px;justify-content:flex-end;transition:width .8s ease;min-width:4px;}
+.mob-toggle{display:none;background:var(--p);border:none;border-radius:10px;padding:10px;cursor:pointer;color:#fff;font-size:18px;}
+@media(max-width:768px){.sidebar{transform:translateX(-250px);}.sidebar.open{transform:translateX(0);}.main{margin-left:0;}.form-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}.mob-toggle{display:flex;}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="toast" id="toast"></div>
+<div class="modal-overlay hidden" id="modalOverlay"><div class="modal" id="modalContent"></div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCoh862TIz9v3JM7qCtCHLKpx84FyGFJko",
+  authDomain: "joyfully-in.firebaseapp.com",
+  projectId: "joyfully-in",
+  storageBucket: "joyfully-in.firebasestorage.app",
+  messagingSenderId: "994700639123",
+  appId: "1:994700639123:web:bc5b28e78cd005efd78666"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+let currentPage = "dashboard";
+
+// ── HELPERS ───────────────────────────────────────────────
+function toast(msg, type="") {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.className = "toast show " + type;
+  setTimeout(() => t.className = "toast", 3500);
+}
+function openModal(html) { document.getElementById("modalContent").innerHTML = html; document.getElementById("modalOverlay").classList.remove("hidden"); }
+function closeModal() { document.getElementById("modalOverlay").classList.add("hidden"); }
+window.closeModal = closeModal;
+document.getElementById("modalOverlay").addEventListener("click", e => { if(e.target === document.getElementById("modalOverlay")) closeModal(); });
+
+// ── RENDER APP ────────────────────────────────────────────
+function renderApp() {
+  const root = document.getElementById("root");
+  const user = window._pUser;
+  const partner = window._pData;
+
+  if (!user) { root.innerHTML = renderAuthPage(); attachAuthEvents(); return; }
+  if (!partner) { root.innerHTML = renderRegPage(); attachRegEvents(); return; }
+  if (partner.status === "pending")   { root.innerHTML = renderStatusPage("⏳","Application Under Review","Your application is being reviewed. We'll contact you within 24 hours."); return; }
+  if (partner.status === "rejected")  { root.innerHTML = renderStatusPage("❌","Not Approved","Contact hello@joyfully.in for more info."); return; }
+  if (partner.status === "suspended") { root.innerHTML = renderStatusPage("⏸️","Account Suspended","Contact hello@joyfully.in to resolve."); return; }
+
+  root.innerHTML = renderShell();
+  attachShellEvents();
+  goTo("dashboard");
+}
+
+// ── AUTH PAGE ─────────────────────────────────────────────
+function renderAuthPage() {
+  return '<div class="auth-page"><div class="auth-box">' +
+    '<div style="text-align:center;margin-bottom:24px;"><div style="font-size:44px;">🏢</div>' +
+    '<div style="font-family:\'Baloo 2\',cursive;font-size:26px;font-weight:900;margin-top:8px;">joyfully<span style="color:var(--p);">.in</span></div>' +
+    '<div style="font-size:14px;color:var(--muted);margin-top:4px;">Partner Dashboard</div></div>' +
+    '<div class="auth-tabs"><div class="atab active" id="tabLogin" onclick="switchTab(\'login\')">Sign In</div><div class="atab" id="tabReg" onclick="switchTab(\'register\')">Register Business</div></div>' +
+    '<div id="regFields" style="display:none;">' +
+    '<div class="form-group"><label>Business Name *</label><input id="aBizName" placeholder="Happy Paws Hostel"/></div>' +
+    '<div class="form-group"><label>Your Name *</label><input id="aOwner" placeholder="Owner name"/></div>' +
+    '<div class="form-group"><label>Phone *</label><input id="aPhone" placeholder="+91 98765 43210"/></div>' +
+    '<div class="form-group"><label>Service Type *</label><select id="aType"><option value="">— Select —</option><option value="hostel">🏠 Pet Hostel</option><option value="grooming">✂️ Grooming Centre</option><option value="vet">🩺 Vet Clinic</option><option value="adoption">❤️ Adoption / Shelter</option><option value="burial">🕊️ Pet Burial Service</option><option value="breeder">🐾 Pet Breeder</option><option value="multi">🐾 Multiple Services</option></select></div>' +
+    '<div class="form-group"><label>City *</label><input id="aCity" placeholder="Guwahati, Assam"/></div>' +
+    '</div>' +
+    '<div class="form-group"><label>Email *</label><input id="aEmail" type="email" placeholder="business@email.com"/></div>' +
+    '<div class="form-group"><label>Password *</label><input id="aPass" type="password" placeholder="Min 6 characters"/></div>' +
+    '<button class="btn btn-primary" id="authBtn" style="width:100%;justify-content:center;padding:13px;font-size:15px;" onclick="doAuth()">Sign In →</button>' +
+    '<p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px;">Admin? <a href="/admin" style="color:var(--p);font-weight:800;">Admin Panel</a></p>' +
+    '</div></div>';
+}
+
+function attachAuthEvents() {
+  window._authMode = "login";
+  window.switchTab = function(mode) {
+    window._authMode = mode;
+    document.getElementById("tabLogin").className = "atab" + (mode==="login"?" active":"");
+    document.getElementById("tabReg").className = "atab" + (mode==="register"?" active":"");
+    document.getElementById("regFields").style.display = mode==="register" ? "block" : "none";
+    document.getElementById("authBtn").textContent = mode==="register" ? "Register →" : "Sign In →";
+  };
+  window.doAuth = async function() {
+    const email = document.getElementById("aEmail").value.trim();
+    const pass = document.getElementById("aPass").value;
+    if (!email || !pass) return toast("Please fill all fields","error");
+    try {
+      if (window._authMode === "register") {
+        const biz = document.getElementById("aBizName").value.trim();
+        const owner = document.getElementById("aOwner").value.trim();
+        const phone = document.getElementById("aPhone").value.trim();
+        const type = document.getElementById("aType").value;
+        const city = document.getElementById("aCity").value.trim();
+        if (!biz||!owner||!phone||!type||!city) return toast("Please fill all required fields","error");
+        await createUserWithEmailAndPassword(auth, email, pass);
+        await addDoc(collection(db,"partners"),{name:biz,ownerName:owner,email,phone,type,city,status:"pending",tier:"basic",commission:10,rating:0,reviews:0,totalBookings:0,totalRevenue:0,createdAt:serverTimestamp()});
+        toast("Registered! Awaiting approval 🐾","success");
+      } else {
+        await signInWithEmailAndPassword(auth, email, pass);
+        toast("Welcome back! 🐾","success");
+      }
+    } catch(e) { toast(e.message.replace("Firebase: ","").replace(/\(.*\)/,""),"error"); }
+  };
+}
+
+// ── REGISTER PAGE (logged in, no partner record) ──────────
+function renderRegPage() {
+  return '<div class="auth-page"><div class="auth-box">' +
+    '<div style="text-align:center;margin-bottom:20px;"><div style="font-size:44px;">🏢</div><div style="font-family:\'Baloo 2\',cursive;font-size:22px;font-weight:900;margin-top:8px;">Complete Registration</div></div>' +
+    '<div class="form-group"><label>Business Name *</label><input id="rBiz" placeholder="Happy Paws Hostel"/></div>' +
+    '<div class="form-group"><label>Your Name *</label><input id="rOwner" placeholder="Owner name"/></div>' +
+    '<div class="form-group"><label>Phone *</label><input id="rPhone" placeholder="+91 98765 43210"/></div>' +
+    '<div class="form-group"><label>Service Type *</label><select id="rType"><option value="">— Select —</option><option value="hostel">🏠 Pet Hostel</option><option value="grooming">✂️ Grooming</option><option value="vet">🩺 Vet Clinic</option><option value="adoption">❤️ Adoption</option><option value="burial">🕊️ Burial</option><option value="breeder">🐾 Breeder</option><option value="multi">🐾 Multiple</option></select></div>' +
+    '<div class="form-group"><label>City *</label><input id="rCity" placeholder="Guwahati, Assam"/></div>' +
+    '<button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;" onclick="doCompleteReg()">Submit for Approval →</button>' +
+    '</div></div>';
+}
+function attachRegEvents() {
+  window.doCompleteReg = async function() {
+    const biz = document.getElementById("rBiz").value.trim();
+    const owner = document.getElementById("rOwner").value.trim();
+    const phone = document.getElementById("rPhone").value.trim();
+    const type = document.getElementById("rType").value;
+    const city = document.getElementById("rCity").value.trim();
+    if (!biz||!owner||!phone||!type||!city) return toast("Fill all fields","error");
+    try {
+      await addDoc(collection(db,"partners"),{name:biz,ownerName:owner,email:window._pUser.email,phone,type,city,status:"pending",tier:"basic",commission:10,rating:0,reviews:0,totalBookings:0,totalRevenue:0,createdAt:serverTimestamp()});
+      toast("Submitted! 🐾","success");
+      const snap = await getDocs(query(collection(db,"partners"),where("email","==",window._pUser.email)));
+      window._pData = snap.empty ? null : {id:snap.docs[0].id,...snap.docs[0].data()};
+      renderApp();
+    } catch(e) { toast("Error: "+e.message,"error"); }
+  };
+}
+
+// ── STATUS PAGE ───────────────────────────────────────────
+function renderStatusPage(em, title, msg) {
+  return '<div class="pending-page"><div style="text-align:center;color:#fff;max-width:420px;padding:20px;">' +
+    '<div style="font-size:64px;margin-bottom:20px;">' + em + '</div>' +
+    '<div style="font-family:\'Baloo 2\',cursive;font-size:26px;font-weight:900;margin-bottom:12px;">' + title + '</div>' +
+    '<p style="opacity:.75;font-size:15px;line-height:1.7;margin-bottom:24px;">' + msg + '</p>' +
+    '<button onclick="doSignOut()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 24px;color:#fff;font-family:\'Nunito\',sans-serif;font-weight:700;cursor:pointer;">Sign Out</button>' +
+    '</div></div>';
+}
+
+// ── SHELL ─────────────────────────────────────────────────
+function renderShell() {
+  const p = window._pData;
+  const tierClass = {basic:"tier-basic",verified:"tier-verified",premium:"tier-premium"};
+  const typeEmoji = {hostel:"🏠",grooming:"✂️",vet:"🩺",adoption:"❤️",burial:"🕊️",breeder:"🐾",multi:"🐾"};
+  return '<div class="shell">' +
+    '<div class="sidebar" id="sidebar">' +
+    '<div class="sb-logo"><h1>🐾 joyfully<span>.in</span></h1><p>Partner Dashboard</p></div>' +
+    '<div class="sb-partner"><div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+    '<div><div class="sb-partner-name">' + (p.name||"Partner") + '</div>' +
+    '<div class="sb-partner-type">' + (typeEmoji[p.type]||"🐾") + ' ' + (p.type||"") + ' · ' + (p.city||"") + '</div>' +
+    '<div class="tier-badge ' + (tierClass[p.tier]||"tier-basic") + '">' + (p.tier||"basic") + '</div></div>' +
+    '<button onclick="doSignOut()" style="background:rgba(213,63,63,.15);border:none;border-radius:8px;width:28px;height:28px;cursor:pointer;color:#fff;font-size:13px;">🚪</button>' +
+    '</div></div>' +
+    '<div class="nav-sec">Main</div>' +
+    '<div class="nav-item" id="nav-dashboard" onclick="goTo(\'dashboard\')"><span class="ni">📊</span> Dashboard</div>' +
+    '<div class="nav-item" id="nav-bookings" onclick="goTo(\'bookings\')"><span class="ni">📅</span> My Bookings</div>' +
+    '<div class="nav-item" id="nav-calendar" onclick="goTo(\'calendar\')"><span class="ni">🗓️</span> Calendar</div>' +
+    '<div class="nav-sec">My Services</div>' +
+    '<div class="nav-item" id="nav-listings" onclick="goTo(\'listings\')"><span class="ni">📋</span> Service Listings</div>' +
+    '<div class="nav-item" id="nav-revenue" onclick="goTo(\'revenue\')"><span class="ni">💰</span> Revenue</div>' +
+    '<div class="nav-item" id="nav-reviews" onclick="goTo(\'reviews\')"><span class="ni">⭐</span> My Reviews</div>' +
+    '<div class="nav-sec">Account</div>' +
+    '<div class="nav-item" id="nav-profile" onclick="goTo(\'profile\')"><span class="ni">🏢</span> Business Profile</div>' +
+    '<div class="nav-item" id="nav-tier" onclick="goTo(\'tier\')"><span class="ni">🏆</span> Upgrade Plan</div>' +
+    '<div class="sb-footer"><button class="sign-out-btn" onclick="doSignOut()">🚪 Sign Out</button></div>' +
+    '</div>' +
+    '<div class="main">' +
+    '<div class="topbar">' +
+    '<div style="display:flex;align-items:center;gap:14px;"><button class="mob-toggle" onclick="document.getElementById(\'sidebar\').classList.toggle(\'open\')">☰</button>' +
+    '<div class="topbar-title" id="pageTitle">Dashboard</div></div>' +
+    '<button onclick="doSignOut()" style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:7px 14px;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">🚪 Sign Out</button>' +
+    '</div>' +
+    '<div class="content" id="pageContent"></div>' +
+    '</div></div>';
+}
+
+function attachShellEvents() {
+  window.goTo = function(page) {
+    currentPage = page;
+    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+    const navEl = document.getElementById("nav-" + page);
+    if (navEl) navEl.classList.add("active");
+    const titles = {dashboard:"📊 Dashboard",bookings:"📅 My Bookings",calendar:"🗓️ Calendar",listings:"📋 Service Listings",revenue:"💰 Revenue",reviews:"⭐ My Reviews",profile:"🏢 Business Profile",tier:"🏆 Upgrade Plan"};
+    const titleEl = document.getElementById("pageTitle");
+    if (titleEl) titleEl.textContent = titles[page] || page;
+    const el = document.getElementById("pageContent");
+    if (!el) return;
+    switch(page) {
+      case "dashboard": renderDash(el); break;
+      case "bookings": renderBookings(el); break;
+      case "calendar": renderCalendar(el); break;
+      case "listings": renderListings(el); break;
+      case "revenue": renderRevenue(el); break;
+      case "reviews": renderMyReviews(el); break;
+      case "profile": renderProfile(el); break;
+      case "tier": renderTier(el); break;
+      default: el.innerHTML = '<div class="empty"><div class="em">🚧</div><p>Coming soon</p></div>';
+    }
+  };
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────
+async function renderDash(el) {
+  const p = window._pData;
+  const commission = p.commission || 10;
+  el.innerHTML = '<div class="stats-row">' +
+    '<div class="stat-card s1"><div class="stat-em">📅</div><div class="stat-val" id="dB">—</div><div class="stat-label">Total Bookings</div></div>' +
+    '<div class="stat-card s2"><div class="stat-em">⏳</div><div class="stat-val" id="dP">—</div><div class="stat-label">Pending</div></div>' +
+    '<div class="stat-card s3"><div class="stat-em">💰</div><div class="stat-val" id="dR">—</div><div class="stat-label">Revenue</div></div>' +
+    '<div class="stat-card s4"><div class="stat-em">✅</div><div class="stat-val" id="dN">—</div><div class="stat-label">Your Earnings</div></div>' +
+    '<div class="stat-card s5"><div class="stat-em">⭐</div><div class="stat-val" id="dRt">' + (p.rating||0) + '★</div><div class="stat-label">Rating</div></div>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">' +
+    '<div class="card"><div class="card-header"><h3>Recent Bookings</h3><button class="btn btn-ghost btn-sm" onclick="goTo(\'bookings\')">View All</button></div><div class="card-body" id="dRecent"><div class="empty"><div class="em">📅</div><p>No bookings yet</p></div></div></div>' +
+    '<div class="card"><div class="card-header"><h3>Quick Actions</h3></div><div class="card-body" style="display:flex;flex-direction:column;gap:10px;">' +
+    '<button class="btn btn-primary" onclick="goTo(\'bookings\')" style="justify-content:center;">📅 My Bookings</button>' +
+    '<button class="btn btn-ghost" onclick="goTo(\'calendar\')" style="justify-content:center;">🗓️ Manage Calendar</button>' +
+    '<button class="btn btn-ghost" onclick="goTo(\'listings\')" style="justify-content:center;">📋 Edit Listings</button>' +
+    '<button class="btn btn-ghost" onclick="goTo(\'profile\')" style="justify-content:center;">🏢 Update Profile</button>' +
+    '</div></div></div>' +
+    '<div class="card"><div class="card-header"><h3>💰 Commission Info</h3></div><div class="card-body">' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">' +
+    '<div style="background:var(--bg);border-radius:12px;padding:14px;text-align:center;"><div style="font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px;">YOUR COMMISSION</div><div style="font-family:\'Baloo 2\',cursive;font-size:28px;font-weight:900;color:var(--red);">' + commission + '%</div><div style="font-size:11px;color:var(--muted);">Set by Admin</div></div>' +
+    '<div style="background:var(--bg);border-radius:12px;padding:14px;text-align:center;"><div style="font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px;">PLATFORM EARNS</div><div style="font-family:\'Baloo 2\',cursive;font-size:28px;font-weight:900;color:var(--p);" id="dCE">₹0</div></div>' +
+    '<div style="background:var(--bg);border-radius:12px;padding:14px;text-align:center;"><div style="font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px;">YOU EARN</div><div style="font-family:\'Baloo 2\',cursive;font-size:28px;font-weight:900;color:var(--green);" id="dYE">₹0</div></div>' +
+    '</div></div></div>';
+  try {
+    const snap = await getDocs(query(collection(db,"bookings"),where("partnerId","==",p.id)));
+    const bks = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const rev = bks.filter(b=>b.status==="completed").reduce((s,b)=>s+(b.amount||0),0);
+    const commAmt = rev*commission/100; const net = rev-commAmt;
+    document.getElementById("dB").textContent = bks.length;
+    document.getElementById("dP").textContent = bks.filter(b=>b.status==="pending").length;
+    document.getElementById("dR").textContent = "₹"+(rev>=1000?(rev/1000).toFixed(1)+"K":rev);
+    document.getElementById("dN").textContent = "₹"+net.toFixed(0);
+    document.getElementById("dCE").textContent = "₹"+commAmt.toFixed(0);
+    document.getElementById("dYE").textContent = "₹"+net.toFixed(0);
+    const recent = bks.slice(0,5);
+    if (recent.length) document.getElementById("dRecent").innerHTML = recent.map(b =>
+      '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">' +
+      '<div><div style="font-weight:700;font-size:13px;">' + (b.customerName||"Customer") + ' — ' + (b.petName||"Pet") + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);">' + (b.service||"") + ' · ' + (b.date||"TBD") + '</div></div>' +
+      '<span class="badge badge-' + (b.status||"pending") + '">' + (b.status||"pending") + '</span></div>').join("");
+  } catch(e) { console.error(e); }
+}
+
+// ── BOOKINGS ──────────────────────────────────────────────
+async function renderBookings(el) {
+  el.innerHTML = '<div class="ftabs" id="bkTabs">' +
+    ['all','pending','confirmed','completed','cancelled'].map(f =>
+      '<div class="ftab' + (f==="all"?" active":"") + '" onclick="filterBk(\'' + f + '\',this)">' + (f==="all"?"All":f.charAt(0).toUpperCase()+f.slice(1)) + '</div>').join("") +
+    '</div><div class="card"><div class="card-body table-wrap" id="bkTable"><div class="empty"><div class="em">⏳</div><p>Loading…</p></div></div></div>';
+  window._bkFilter = "all";
+  window.filterBk = function(f,btn) { window._bkFilter=f; document.querySelectorAll("#bkTabs .ftab").forEach(t=>t.classList.remove("active")); btn.classList.add("active"); loadBk(); };
+  loadBk();
+}
+async function loadBk() {
+  const el = document.getElementById("bkTable"); if(!el) return;
+  const p = window._pData;
+  try {
+    const snap = await getDocs(query(collection(db,"bookings"),where("partnerId","==",p.id)));
+    let bks = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    if (window._bkFilter !== "all") bks = bks.filter(b=>b.status===window._bkFilter);
+    if (!bks.length) { el.innerHTML = '<div class="empty"><div class="em">📭</div><p>No bookings found</p></div>'; return; }
+    el.innerHTML = '<table><tr><th>Customer</th><th>Pet</th><th>Service</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr>' +
+      bks.map(b => '<tr>' +
+        '<td><div style="font-weight:700;">' + (b.customerName||"—") + '</div><div style="font-size:11px;color:var(--muted);">' + (b.customerPhone||"") + '</div></td>' +
+        '<td>' + (b.petName||"—") + '</td><td>' + (b.service||"—") + '</td><td>' + (b.date||"TBD") + '</td>' +
+        '<td style="font-weight:800;color:var(--p);">' + (b.amount ? "₹"+b.amount.toLocaleString() : "—") + '</td>' +
+        '<td><span class="badge badge-' + (b.status||"pending") + '">' + (b.status||"pending") + '</span></td>' +
+        '<td><div style="display:flex;flex-direction:column;gap:5px;">' +
+        (b.status==="pending" ? '<button class="btn btn-success btn-sm" onclick="setBkStatus(\'' + b.id + '\',\'confirmed\')">✅ Accept</button><button class="btn btn-danger btn-sm" onclick="setBkStatus(\'' + b.id + '\',\'cancelled\')">❌ Decline</button>' : "") +
+        (b.status==="confirmed" ? '<button class="btn btn-ghost btn-sm" onclick="setBkStatus(\'' + b.id + '\',\'completed\')">🏁 Done</button>' : "") +
+        '</div></td></tr>').join("") + '</table>';
+    window.setBkStatus = async function(id, status) {
+      await updateDoc(doc(db,"bookings",id),{status,updatedAt:serverTimestamp()});
+      toast("Updated ✅","success"); loadBk();
+    };
+  } catch(e) { el.innerHTML = '<div class="empty"><div class="em">⚠️</div><p>' + e.message + '</p></div>'; }
+}
+
+// ── CALENDAR ──────────────────────────────────────────────
+async function renderCalendar(el) {
+  const now = new Date();
+  window._calY = now.getFullYear(); window._calM = now.getMonth();
+  el.innerHTML = '<div class="card" style="margin-bottom:16px;"><div class="card-header"><h3>🗓️ Availability</h3>' +
+    '<div style="display:flex;gap:10px;align-items:center;"><button class="btn btn-ghost btn-sm" onclick="moveCal(-1)">◀</button>' +
+    '<span id="calLbl" style="font-weight:800;min-width:130px;text-align:center;"></span>' +
+    '<button class="btn btn-ghost btn-sm" onclick="moveCal(1)">▶</button></div></div>' +
+    '<div class="card-body"><div class="cal-grid" id="calDN"></div><div class="cal-grid" id="calGrid" style="margin-top:4px;"></div>' +
+    '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;">' +
+    '<div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;"><div style="width:12px;height:12px;border-radius:4px;background:#e8f5e9;"></div>Available</div>' +
+    '<div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;"><div style="width:12px;height:12px;border-radius:4px;background:#ffebee;"></div>Booked</div>' +
+    '<div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;"><div style="width:12px;height:12px;border-radius:4px;background:#f5f5f5;"></div>Blocked</div>' +
+    '</div></div></div>' +
+    '<div class="card"><div class="card-header"><h3>🔒 Block Dates</h3></div><div class="card-body">' +
+    '<div class="form-grid"><div class="form-group"><label>From</label><input type="date" id="blkFrom"/></div><div class="form-group"><label>To</label><input type="date" id="blkTo"/></div><div class="form-group"><label>Reason</label><input id="blkReason" placeholder="Holiday, Full…"/></div></div>' +
+    '<button class="btn btn-danger" onclick="addBlock()">🔒 Block Dates</button>' +
+    '</div></div>';
+  window.moveCal = function(d) { window._calM+=d; if(window._calM>11){window._calM=0;window._calY++;} if(window._calM<0){window._calM=11;window._calY--;} drawCal(); };
+  window.addBlock = async function() {
+    const from = document.getElementById("blkFrom").value;
+    const to = document.getElementById("blkTo").value || from;
+    if (!from) return toast("Select a date","error");
+    await addDoc(collection(db,"partner_blocks"),{partnerId:window._pData.id,from,to,reason:document.getElementById("blkReason").value||"Blocked",createdAt:serverTimestamp()});
+    toast("Blocked 🔒","success"); drawCal();
+  };
+  drawCal();
+}
+async function drawCal() {
+  const yr=window._calY, mo=window._calM;
+  const months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const lbl=document.getElementById("calLbl"); if(lbl) lbl.textContent=months[mo]+" "+yr;
+  const dn=document.getElementById("calDN"); if(dn) dn.innerHTML=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=>'<div class="cal-day-name">'+d+'</div>').join("");
+  let booked=new Set(), blocked=new Set();
+  try {
+    const bs=await getDocs(query(collection(db,"bookings"),where("partnerId","==",window._pData.id)));
+    bs.docs.forEach(d=>{const data=d.data();if(data.date&&data.status!=="cancelled"){const dt=new Date(data.date);if(dt.getFullYear()===yr&&dt.getMonth()===mo)booked.add(dt.getDate());}});
+    const bls=await getDocs(query(collection(db,"partner_blocks"),where("partnerId","==",window._pData.id)));
+    bls.docs.forEach(d=>{const bd=d.data();if(!bd.from)return;const s=new Date(bd.from),e=new Date(bd.to||bd.from),c=new Date(s);while(c<=e){if(c.getFullYear()===yr&&c.getMonth()===mo)blocked.add(c.getDate());c.setDate(c.getDate()+1);}});
+  } catch(e){}
+  const firstDay=new Date(yr,mo,1).getDay(), days=new Date(yr,mo+1,0).getDate(), today=new Date();
+  let html=Array(firstDay).fill('<div class="cal-day empty"></div>').join("");
+  for(let d=1;d<=days;d++){
+    const isToday=(d===today.getDate()&&mo===today.getMonth()&&yr===today.getFullYear());
+    const cls=blocked.has(d)?"blocked":booked.has(d)?"booked":"available";
+    html+='<div class="cal-day '+cls+(isToday?" today":"")+'">'+d+'<br/><span style="font-size:10px;">'+(blocked.has(d)?"🔒":booked.has(d)?"📅":"✅")+'</span></div>';
+  }
+  const grid=document.getElementById("calGrid"); if(grid) grid.innerHTML=html;
+}
+
+// ── LISTINGS ──────────────────────────────────────────────
+async function renderListings(el) {
+  const p = window._pData;
+  el.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:20px;"><div></div><button class="btn btn-primary" onclick="openAddListing()">➕ Add Service</button></div>' +
+    '<div id="listGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;"><div class="empty"><div class="em">⏳</div><p>Loading…</p></div></div>';
+  window.openAddListing = function() {
+    openModal('<h3>➕ Add Service Listing</h3>' +
+      '<div class="form-group"><label>Service Name *</label><input id="lN" placeholder="Basic Grooming Package"/></div>' +
+      '<div class="form-grid"><div class="form-group"><label>Category</label><select id="lC"><option value="grooming">✂️ Grooming</option><option value="hostel">🏠 Hostel</option><option value="vet">🩺 Vet</option><option value="burial">🕊️ Burial</option><option value="adoption">❤️ Adoption</option><option value="breeder">🐾 Breeder</option></select></div><div class="form-group"><label>Price (₹) *</label><input id="lP" type="number" placeholder="999"/></div></div>' +
+      '<div class="form-group"><label>Duration</label><input id="lD" placeholder="45 mins, per night…"/></div>' +
+      '<div class="form-group"><label>Description</label><textarea id="lDesc" placeholder="What is included…"></textarea></div>' +
+      '<div style="display:flex;gap:10px;margin-top:8px;"><button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="saveListing()">Save</button><button class="btn btn-ghost" onclick="closeModal()">Cancel</button></div>');
+    window.saveListing = async function() {
+      const name=document.getElementById("lN").value.trim(), price=document.getElementById("lP").value;
+      if(!name||!price) return toast("Name and price required","error");
+      await addDoc(collection(db,"partner_listings"),{partnerId:p.id,partnerName:p.name,name,category:document.getElementById("lC").value,price:Number(price),duration:document.getElementById("lD").value,description:document.getElementById("lDesc").value,active:true,createdAt:serverTimestamp()});
+      toast("Added ✅","success"); closeModal(); loadListings();
+    };
+  };
+  loadListings();
+}
+async function loadListings() {
+  const el=document.getElementById("listGrid"); if(!el) return;
+  const catEmoji={grooming:"✂️",hostel:"🏠",vet:"🩺",burial:"🕊️",adoption:"❤️",breeder:"🐾"};
+  try {
+    const snap=await getDocs(query(collection(db,"partner_listings"),where("partnerId","==",window._pData.id)));
+    const ls=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!ls.length){el.innerHTML='<div class="empty" style="grid-column:1/-1;"><div class="em">📋</div><p>No services yet. Add your first!</p></div>';return;}
+    el.innerHTML=ls.map(l=>'<div class="card"><div class="slc-header" style="background:var(--bg);border-bottom:1px solid var(--border);"><div><div style="font-size:22px;margin-bottom:4px;">'+(catEmoji[l.category]||"🐾")+'</div><div style="font-family:\'Baloo 2\',cursive;font-size:17px;font-weight:800;">'+l.name+'</div><div style="font-size:12px;color:var(--muted);">'+(l.duration||"")+'</div></div><div><div style="font-family:\'Baloo 2\',cursive;font-size:22px;font-weight:900;color:var(--p);">₹'+l.price?.toLocaleString()+'</div><span class="badge badge-'+(l.active?"confirmed":"pending")+'" style="margin-top:4px;">'+(l.active?"Active":"Paused")+'</span></div></div><div class="card-body"><p style="font-size:13px;color:var(--muted);margin-bottom:12px;">'+(l.description||"")+'</p><div style="display:flex;gap:8px;"><button class="btn btn-ghost btn-sm" onclick="toggleL(\''+l.id+'\','+(!l.active)+')">'+(l.active?"⏸ Pause":"▶ Activate")+'</button><button class="btn btn-danger btn-sm" onclick="delL(\''+l.id+'\')">🗑️</button></div></div></div>').join("");
+    window.toggleL=async(id,val)=>{await updateDoc(doc(db,"partner_listings",id),{active:val});toast("Updated","success");loadListings();};
+    window.delL=async(id)=>{if(!confirm("Delete?"))return;await deleteDoc(doc(db,"partner_listings",id));toast("Deleted","success");loadListings();};
+  } catch(e){el.innerHTML='<div class="empty"><div class="em">⚠️</div><p>'+e.message+'</p></div>';}
+}
+
+// ── REVENUE ───────────────────────────────────────────────
+async function renderRevenue(el) {
+  const p = window._pData; const c = p.commission||10;
+  el.innerHTML = '<div class="stats-row"><div class="stat-card s1"><div class="stat-em">💰</div><div class="stat-val" id="rvG">—</div><div class="stat-label">Gross Revenue</div></div><div class="stat-card s2"><div class="stat-em">💸</div><div class="stat-val" id="rvC">—</div><div class="stat-label">Commission ('+c+'%)</div></div><div class="stat-card s3"><div class="stat-em">✅</div><div class="stat-val" id="rvN">—</div><div class="stat-label">Your Earnings</div></div><div class="stat-card s4"><div class="stat-em">🏁</div><div class="stat-val" id="rvD">—</div><div class="stat-label">Completed</div></div></div>' +
+    '<div class="card"><div class="card-header"><h3>Recent Completed Bookings</h3></div><div class="card-body table-wrap" id="rvT"><div class="empty"><div class="em">⏳</div><p>Loading…</p></div></div></div>';
+  try {
+    const snap=await getDocs(query(collection(db,"bookings"),where("partnerId","==",p.id)));
+    const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const done=all.filter(b=>b.status==="completed");
+    const gross=done.reduce((s,b)=>s+(b.amount||0),0);
+    const comm=gross*c/100; const net=gross-comm;
+    document.getElementById("rvG").textContent="₹"+gross.toLocaleString();
+    document.getElementById("rvC").textContent="₹"+comm.toFixed(0);
+    document.getElementById("rvN").textContent="₹"+net.toFixed(0);
+    document.getElementById("rvD").textContent=done.length;
+    document.getElementById("rvT").innerHTML=done.length?'<table><tr><th>Customer</th><th>Service</th><th>Date</th><th>Amount</th><th>Commission</th><th>You Earn</th></tr>'+done.slice(0,10).map(b=>{const a=b.amount||0;const cm=a*c/100;return'<tr><td style="font-weight:700;">'+(b.customerName||"—")+'</td><td>'+(b.service||"—")+'</td><td>'+(b.date||"—")+'</td><td style="font-weight:800;color:var(--p);">₹'+a.toLocaleString()+'</td><td style="color:var(--red);">-₹'+cm.toFixed(0)+'</td><td style="font-weight:800;color:var(--green);">₹'+(a-cm).toFixed(0)+'</td></tr>';}).join("")+'</table>':'<div class="empty"><div class="em">📭</div><p>No completed bookings yet</p></div>';
+  } catch(e){}
+}
+
+// ── REVIEWS ───────────────────────────────────────────────
+async function renderMyReviews(el) {
+  el.innerHTML='<div class="card"><div class="card-body" id="rvList"><div class="empty"><div class="em">⏳</div><p>Loading…</p></div></div></div>';
+  try {
+    const snap=await getDocs(query(collection(db,"reviews"),where("partnerId","==",window._pData.id)));
+    const revs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const el2=document.getElementById("rvList");
+    if(!revs.length){el2.innerHTML='<div class="empty"><div class="em">⭐</div><p>No reviews yet</p></div>';return;}
+    el2.innerHTML=revs.map(r=>'<div style="border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;"><div><div style="font-weight:800;">'+(r.name||"Customer")+'</div><div style="font-size:11px;color:var(--muted);">'+(r.service||"")+'</div></div><div style="color:#fdcb6e;font-size:16px;">'+"★".repeat(r.rating||0)+"☆".repeat(5-(r.rating||0))+'</div></div><p style="font-size:14px;color:var(--mid);line-height:1.6;">"'+(r.text||"")+'\"</p></div>').join("");
+  } catch(e){}
+}
+
+// ── PROFILE ───────────────────────────────────────────────
+function renderProfile(el) {
+  const p=window._pData;
+  el.innerHTML='<div class="card"><div class="card-header"><h3>🏢 Business Profile</h3></div><div class="card-body">' +
+    '<div class="form-grid"><div class="form-group"><label>Business Name</label><input id="prN" value="'+(p.name||"")+'"/></div><div class="form-group"><label>Owner Name</label><input id="prO" value="'+(p.ownerName||"")+'"/></div><div class="form-group"><label>Phone</label><input id="prPh" value="'+(p.phone||"")+'"/></div><div class="form-group"><label>City</label><input id="prC" value="'+(p.city||"")+'"/></div></div>' +
+    '<div class="form-group"><label>About Your Business</label><textarea id="prD">'+(p.description||"")+'</textarea></div>' +
+    '<div class="form-grid"><div class="form-group"><label>Operating Hours</label><input id="prH" value="'+(p.hours||"")+'" placeholder="Mon-Sat 9AM-7PM"/></div><div class="form-group"><label>Website / Social</label><input id="prW" value="'+(p.website||"")+'" placeholder="https://instagram.com/…"/></div></div>' +
+    '<button class="btn btn-primary" onclick="saveProfile()" style="width:100%;justify-content:center;">💾 Save Profile</button>' +
+    '</div></div>' +
+    '<div class="card" style="margin-top:20px;"><div class="card-header"><h3>📊 Account Info</h3></div><div class="card-body">' +
+    '<div style="display:flex;flex-direction:column;gap:10px;">' +
+    '<div style="background:var(--bg);border-radius:12px;padding:14px;display:flex;justify-content:space-between;"><span style="font-weight:700;">Status</span><span class="badge badge-'+(p.status||"pending")+'">'+(p.status||"pending")+'</span></div>' +
+    '<div style="background:var(--bg);border-radius:12px;padding:14px;display:flex;justify-content:space-between;"><span style="font-weight:700;">Tier</span><span style="font-weight:800;">'+(p.tier||"basic")+'</span></div>' +
+    '<div style="background:var(--bg);border-radius:12px;padding:14px;display:flex;justify-content:space-between;"><span style="font-weight:700;">Commission</span><span style="font-weight:900;color:var(--red);">'+(p.commission||10)+'%</span></div>' +
+    '</div></div></div>';
+  window.saveProfile=async function(){
+    try{
+      await updateDoc(doc(db,"partners",p.id),{name:document.getElementById("prN").value.trim(),ownerName:document.getElementById("prO").value.trim(),phone:document.getElementById("prPh").value.trim(),city:document.getElementById("prC").value.trim(),description:document.getElementById("prD").value,hours:document.getElementById("prH").value,website:document.getElementById("prW").value,updatedAt:serverTimestamp()});
+      toast("Saved ✅","success");
+    }catch(e){toast("Error: "+e.message,"error");}
+  };
+}
+
+// ── TIER ──────────────────────────────────────────────────
+function renderTier(el) {
+  const cur=window._pData?.tier||"basic";
+  const tiers=[
+    {id:"basic",name:"🥉 Basic",price:"Free",color:"#9ca3af",features:["Listed on joyfully.in","Accept bookings","Basic dashboard","10% commission"]},
+    {id:"verified",name:"🥈 Verified",price:"₹499/month",color:"#34d399",features:["All Basic features","✅ Verified badge","Priority listing","8% commission"]},
+    {id:"premium",name:"🥇 Premium",price:"₹999/month",color:"#fdcb6e",features:["All Verified features","⭐ Featured on homepage","Top placement","5% commission"]},
+  ];
+  el.innerHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">'+
+    tiers.map(t=>'<div style="background:#fff;border-radius:20px;padding:24px;border:2px solid '+(t.id===cur?"var(--p)":t.color+"44")+';position:relative;">' +
+      (t.id===cur?'<div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--p);color:#fff;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;">CURRENT</div>':"")+
+      '<div style="text-align:center;margin-bottom:16px;"><div style="font-family:\'Baloo 2\',cursive;font-size:20px;font-weight:900;">'+t.name+'</div><div style="font-family:\'Baloo 2\',cursive;font-size:28px;font-weight:900;color:'+t.color+';margin:8px 0;">'+t.price+'</div></div>'+
+      '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">'+t.features.map(f=>'<div style="display:flex;align-items:center;gap:8px;font-size:13px;"><span style="color:'+t.color+';">✓</span>'+f+'</div>').join("")+'</div>'+
+      (t.id!==cur?'<button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="reqUpgrade(\''+t.id+'\',\''+t.name+'\',\''+t.price+'\')">Upgrade →</button>':'<div style="text-align:center;font-size:13px;color:var(--muted);font-weight:700;">✅ Active</div>')+
+      '</div>').join("")+'</div>'+
+    '<div style="margin-top:20px;background:#e3f2fd;border-radius:16px;padding:20px;font-size:14px;color:#1565c0;line-height:1.7;"><strong>💡 How upgrades work:</strong> Click Upgrade to send a request. Admin will contact you to confirm payment and activate your new tier.</div>';
+  window.reqUpgrade=async function(id,name,price){
+    await addDoc(collection(db,"tier_requests"),{partnerId:window._pData.id,partnerName:window._pData.name,email:window._pData.email,requestedTier:id,tierName:name,price,status:"pending",createdAt:serverTimestamp()});
+    toast("Upgrade request sent! 🐾","success");
+  };
+}
+
+// ── SIGN OUT ──────────────────────────────────────────────
+window.doSignOut = async function() {
+  await signOut(auth);
+  toast("Signed out 🐾");
+};
+
+// ── AUTH LISTENER — registered AFTER all functions defined ─
+onAuthStateChanged(auth, async (user) => {
+  window._pUser = user;
+  window._pData = null;
+  if (user) {
+    try {
+      const snap = await getDocs(query(collection(db,"partners"),where("email","==",user.email)));
+      if (!snap.empty) window._pData = {id:snap.docs[0].id,...snap.docs[0].data()};
+    } catch(e) { console.error(e); }
+  }
+  renderApp();
+});
+
+// Show login page immediately
+renderApp();
+</script>
+</body>
+</html>

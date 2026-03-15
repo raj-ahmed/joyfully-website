@@ -4,59 +4,6 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>joyfully.in – Admin Panel</title>
-
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, where, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-  // ── FIREBASE CONFIG ──────────────────────────────────────
-  // IMPORTANT: Replace these values with YOUR Firebase project config
-  // See SETUP GUIDE at bottom of this file
-  const firebaseConfig = {
-    apiKey: "AIzaSyCoh862TIz9v3JM7qCtCHLKpx84FyGFJko",
-    authDomain: "joyfully-in.firebaseapp.com",
-    projectId: "joyfully-in",
-    storageBucket: "joyfully-in.firebasestorage.app",
-    messagingSenderId: "994700639123",
-    appId: "1:994700639123:web:bc5b28e78cd005efd78666"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
-
-  // ── GLOBAL STATE ─────────────────────────────────────────
-  window.DB = db;
-  window.AUTH = auth;
-  window.FIREBASE = { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, where, serverTimestamp, onSnapshot, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged };
-  window.currentUser = null;
-  window.currentRole = null;
-
-  // ── AUTH STATE LISTENER ───────────────────────────────────
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      window.currentUser = user;
-      // Check role in Firestore
-      try {
-        const snap = await getDocs(query(collection(db, "staff"), where("email", "==", user.email)));
-        if (!snap.empty) {
-          window.currentRole = snap.docs[0].data().role;
-          window.staffName = snap.docs[0].data().name;
-        } else {
-          window.currentRole = "customer";
-        }
-      } catch(e) { window.currentRole = "customer"; }
-      renderApp();
-    } else {
-      window.currentUser = null;
-      window.currentRole = null;
-      renderApp();
-    }
-  });
-</script>
-
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -287,17 +234,29 @@ textarea{resize:vertical;min-height:80px;}
 </style>
 </head>
 <body>
-
 <div id="root"></div>
 <div class="toast" id="toast"></div>
 
 <script type="module">
-// Wait for Firebase to load
-await new Promise(r => setTimeout(r, 800));
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, where, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, where, serverTimestamp, onSnapshot, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } = window.FIREBASE;
-const db = window.DB;
-const auth = window.AUTH;
+const firebaseConfig = {
+  apiKey: "AIzaSyCoh862TIz9v3JM7qCtCHLKpx84FyGFJko",
+  authDomain: "joyfully-in.firebaseapp.com",
+  projectId: "joyfully-in",
+  storageBucket: "joyfully-in.firebasestorage.app",
+  messagingSenderId: "994700639123",
+  appId: "1:994700639123:web:bc5b28e78cd005efd78666"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// Wait for Firebase to load
+
 
 // ── TOAST ─────────────────────────────────────────────────
 function toast(msg, type="") {
@@ -453,7 +412,8 @@ function renderShell() {
       ${isAdmin ? `
       <div class="nav-section">Admin</div>
       <div class="nav-item ${currentPage==='staff'?'active':''}" onclick="goTo('staff')"><span class="ni">👥</span> Staff & Roles</div>
-      <div class="nav-item ${currentPage==='agencies'?'active':''}" onclick="goTo('agencies')"><span class="ni">🏢</span> Agencies</div>
+      <div class="nav-item ${currentPage==='partners'?'active':''}" onclick="goTo('partners')"><span class="ni">🤝</span> Partners</div>
+      <div class="nav-item ${currentPage==='tier-requests'?'active':''}" onclick="goTo('tier-requests')"><span class="ni">🏆</span> Tier Requests</div>
       <div class="nav-item ${currentPage==='reports'?'active':''}" onclick="goTo('reports')"><span class="ni">📈</span> Reports</div>
       <div class="nav-item ${currentPage==='discounts'?'active':''}" onclick="goTo('discounts')"><span class="ni">🏷️</span> Discount Codes</div>
       <div class="nav-item ${currentPage==='invoices'?'active':''}" onclick="goTo('invoices')"><span class="ni">🧾</span> Invoices</div>
@@ -518,7 +478,7 @@ function attachShellEvents() {
 
 // ── RENDER PAGE ───────────────────────────────────────────
 function renderPage(page) {
-  const titles = { dashboard:"📊 Dashboard", bookings:"📅 Bookings", "new-booking":"➕ New Booking", products:"📋 Manage Products", adoptions:"❤️ Adoptions", staff:"👥 Staff & Roles", agencies:"🏢 Manage Agencies", reports:"📈 Reports", "my-pets":"🐾 My Pets", store:"🛒 Pet Store", "my-orders":"📦 My Orders", orders:"🚚 Manage Orders", "hostel-calendar":"🗓️ Hostel Calendar", reviews:"⭐ Reviews", discounts:"🏷️ Discount Codes", invoices:"🧾 Invoices" };
+  const titles = { dashboard:"📊 Dashboard", bookings:"📅 Bookings", "new-booking":"➕ New Booking", products:"📋 Manage Products", adoptions:"❤️ Adoptions", staff:"👥 Staff & Roles", partners:"🤝 Manage Partners", "tier-requests":"🏆 Tier Requests", reports:"📈 Reports", "my-pets":"🐾 My Pets", store:"🛒 Pet Store", "my-orders":"📦 My Orders", orders:"🚚 Manage Orders", "hostel-calendar":"🗓️ Hostel Calendar", reviews:"⭐ Reviews", discounts:"🏷️ Discount Codes", invoices:"🧾 Invoices" };
   document.getElementById("pageTitle").textContent = titles[page] || page;
   const content = document.getElementById("pageContent");
   switch(page) {
@@ -534,7 +494,8 @@ function renderPage(page) {
     case "reviews": renderReviews(content); break;
     case "discounts": renderDiscounts(content); break;
     case "invoices": renderInvoices(content); break;
-    case "agencies": renderAgencies(content); break;
+    case "partners": renderPartners(content); break;
+    case "tier-requests": renderTierRequests(content); break;
     case "store": renderStore(content); break;
     case "my-orders": renderMyOrders(content); break;
     case "orders": renderManageOrders(content); break;
@@ -544,12 +505,7 @@ function renderPage(page) {
 
 // ── SETUP NOTICE ──────────────────────────────────────────
 function setupNotice() {
-  if (isFirebaseConfigured()) return "";
-  return `<div class="setup-notice">
-    <h4>⚠️ Firebase Setup Required</h4>
-    <p>This system is ready to go — you just need to connect your free Firebase database.<br/>
-    <strong>See the SETUP GUIDE section at the very bottom of this file.</strong> It takes about 10 minutes and is completely free.</p>
-  </div>`;
+  return ""; // Firebase already configured
 }
 
 // ── DASHBOARD ─────────────────────────────────────────────
@@ -1821,133 +1777,109 @@ async function renderReports(el) {
 
 
 
-// ══════════════════════════════════════════════════════════
-// AGENCIES MANAGEMENT
-// ══════════════════════════════════════════════════════════
-async function renderAgencies(el) {
-  if(!["admin","manager"].includes(window.currentRole)){
-    el.innerHTML='<div class="empty"><div class="em">🔒</div><p>Admin access required</p></div>'; return;
-  }
-  el.innerHTML=`<div class="filter-tabs" id="agencyTabs" style="margin-bottom:20px;">
-    <div class="ftab active" onclick="filterAg('all',this)">All</div>
-    <div class="ftab" onclick="filterAg('pending',this)">⏳ Pending Approval</div>
-    <div class="ftab" onclick="filterAg('approved',this)">✅ Approved</div>
-    <div class="ftab" onclick="filterAg('rejected',this)">❌ Rejected</div>
+async function renderPartners(el) {
+  if(!["admin","manager"].includes(window.currentRole)){el.innerHTML='<div class="empty"><div class="em">🔒</div><p>Admin access required</p></div>';return;}
+  el.innerHTML=`<div class="filter-tabs" id="partnerTabs">
+    <div class="ftab active" onclick="filterP('all',this)">All</div>
+    <div class="ftab" onclick="filterP('pending',this)">⏳ Pending</div>
+    <div class="ftab" onclick="filterP('approved',this)">✅ Active</div>
+    <div class="ftab" onclick="filterP('suspended',this)">⏸ Suspended</div>
+    <div class="ftab" onclick="filterP('rejected',this)">❌ Rejected</div>
   </div>
-  <div class="card"><div class="card-body table-wrap" id="agencyTable"><div class="empty"><div class="em">⏳</div><p>Loading…</p></div></div></div>`;
-  window._agFilter="all";
-  window.filterAg=(f,btn)=>{window._agFilter=f;document.querySelectorAll("#agencyTabs .ftab").forEach(t=>t.classList.remove("active"));btn.classList.add("active");loadAgencies2();};
-  loadAgencies2();
+  <div class="card"><div class="card-body table-wrap" id="partnersTable"><div class="empty"><div class="em">⏳</div><p>Loading…</p></div></div></div>`;
+  window._partnerFilter="all";
+  window.filterP=(f,btn)=>{window._partnerFilter=f;document.querySelectorAll("#partnerTabs .ftab").forEach(t=>t.classList.remove("active"));btn.classList.add("active");loadPartners();};
+  loadPartners();
 }
 
-async function loadAgencies2(){
-  const el=document.getElementById("agencyTable"); if(!el)return;
+async function loadPartners(){
+  const el=document.getElementById("partnersTable"); if(!el)return;
   try{
-    const snap=await getDocs(collection(db,"agencies"));
-    let ags=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(window._agFilter!=="all") ags=ags.filter(a=>a.status===window._agFilter);
-    if(!ags.length){el.innerHTML='<div class="empty"><div class="em">🏢</div><p>No agencies found</p></div>';return;}
+    const snap=await getDocs(collection(db,"partners"));
+    let partners=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(window._partnerFilter!=="all") partners=partners.filter(p=>p.status===window._partnerFilter);
+    if(!partners.length){el.innerHTML='<div class="empty"><div class="em">🤝</div><p>No partners found</p></div>';return;}
     const typeEmoji={hostel:"🏠",grooming:"✂️",vet:"🩺",adoption:"❤️",burial:"🕊️",breeder:"🐾",multi:"🐾"};
     el.innerHTML=`<table>
-      <tr><th>Business</th><th>Type</th><th>Owner</th><th>Contact</th><th>City</th><th>Status</th><th>Actions</th></tr>
-      ${ags.map(a=>`<tr>
-        <td><div style="font-weight:800;">${typeEmoji[a.type]||"🐾"} ${a.name||"—"}</div><div style="font-size:11px;color:var(--muted);">${a.description?.substring(0,50)||""}</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">Experience: ${a.years||"New"}</div></td>
-        <td><span class="badge badge-${a.type==="hostel"?"hostel":a.type==="grooming"?"grooming":a.type==="vet"?"vet":a.type==="burial"?"burial":"adoption"}">${a.type||"—"}</span></td>
-        <td style="font-weight:700;">${a.ownerName||"—"}</td>
-        <td><div style="font-size:12px;">${a.phone||"—"}</div><div style="font-size:11px;color:var(--muted);">${a.email||""}</div></td>
-        <td>${a.city||"—"}</td>
-        <td><span class="badge badge-${a.status==="approved"?"confirmed":a.status==="rejected"?"cancelled":"pending"}">${a.status||"pending"}</span></td>
-        <td><div class="action-row" style="flex-direction:column;gap:5px;">
-          ${a.status!=="approved"?`<button class="btn btn-success btn-sm" onclick="updateAgStatus('${a.id}','approved')">✅ Approve</button>`:""}
-          ${a.status==="approved"?`<button class="btn btn-ghost btn-sm" onclick="updateAgStatus('${a.id}','suspended')">⏸ Suspend</button>`:""}
-          ${a.status!=="rejected"?`<button class="btn btn-danger btn-sm" onclick="updateAgStatus('${a.id}','rejected')">❌ Reject</button>`:""}
-          <button class="btn btn-ghost btn-sm" onclick="editAgRating('${a.id}','${a.name?.replace(/'/g,"\'")||""}')">⭐ Rating</button>
+      <tr><th>Business</th><th>Type</th><th>Owner</th><th>Contact</th><th>Tier</th><th>Commission</th><th>Status</th><th>Actions</th></tr>
+      ${partners.map(p=>`<tr>
+        <td><div style="font-weight:800;">${typeEmoji[p.type]||"🐾"} ${p.name||"—"}</div><div style="font-size:11px;color:var(--muted);">${p.city||""}</div></td>
+        <td>${p.type||"—"}</td>
+        <td style="font-weight:700;">${p.ownerName||"—"}</td>
+        <td><div style="font-size:12px;">${p.phone||"—"}</div><div style="font-size:11px;color:var(--muted);">${p.email||""}</div></td>
+        <td><span class="badge badge-${p.tier==='premium'?'completed':p.tier==='verified'?'confirmed':'customer'}">${p.tier||"basic"}</span></td>
+        <td><div style="display:flex;align-items:center;gap:6px;"><span style="font-weight:800;color:var(--red);">${p.commission||10}%</span><button class="btn btn-ghost btn-sm" onclick="editComm('${p.id}',${p.commission||10})">✏️</button></div></td>
+        <td><span class="badge badge-${p.status==='approved'?'confirmed':p.status==='suspended'?'cancelled':'pending'}">${p.status||"pending"}</span></td>
+        <td><div class="action-row" style="flex-direction:column;gap:4px;min-width:120px;">
+          ${p.status==='pending'?`<button class="btn btn-success btn-sm" onclick="updatePartnerStatus('${p.id}','approved')">✅ Approve</button>`:""}
+          ${p.status==='approved'?`<button class="btn btn-warning btn-sm" onclick="updatePartnerStatus('${p.id}','suspended')">⏸ Suspend</button>`:""}
+          ${p.status==='suspended'?`<button class="btn btn-success btn-sm" onclick="updatePartnerStatus('${p.id}','approved')">▶ Reinstate</button>`:""}
+          ${p.status!=='rejected'?`<button class="btn btn-danger btn-sm" onclick="updatePartnerStatus('${p.id}','rejected')">❌ Reject</button>`:""}
+          <button class="btn btn-ghost btn-sm" onclick="setTier('${p.id}','${(p.name||'').replace(/'/g,"\'")}')">🏆 Tier</button>
+          <button class="btn btn-ghost btn-sm" onclick="viewPBk('${p.id}','${(p.name||'').replace(/'/g,"\'")}')">📅 Bookings</button>
         </div></td>
       </tr>`).join("")}
     </table>`;
-    window.updateAgStatus=async(id,status)=>{
-      await updateDoc(doc(db,"agencies",id),{status,updatedAt:serverTimestamp()});
-      toast("Agency "+status+"! ✅","success"); loadAgencies2();
-    };
-    window.editAgRating=async(id,name)=>{
-      const r=prompt("Set rating for "+name+" (1.0 to 5.0):");
-      if(!r||isNaN(r))return;
-      const rv=prompt("Number of reviews:");
-      await updateDoc(doc(db,"agencies",id),{rating:parseFloat(r),reviews:parseInt(rv)||0});
-      toast("Rating updated ⭐","success"); loadAgencies2();
+    window.updatePartnerStatus=async(id,status)=>{await updateDoc(doc(db,"partners",id),{status,updatedAt:serverTimestamp()});toast("Partner "+status+" ✅","success");loadPartners();};
+    window.editComm=async(id,cur)=>{const val=prompt("Set commission % (current: "+cur+"%):",cur);if(!val||isNaN(val))return;await updateDoc(doc(db,"partners",id),{commission:Math.min(50,Math.max(0,parseFloat(val)))});toast("Updated ✅","success");loadPartners();};
+    window.setTier=async(id,name)=>{const tier=prompt("Set tier for "+name+"\nbasic, verified, or premium:","basic");if(!["basic","verified","premium"].includes(tier))return toast("Invalid tier","error");const cm={basic:10,verified:8,premium:5};await updateDoc(doc(db,"partners",id),{tier,commission:cm[tier]});toast("Tier: "+tier+" ✅","success");loadPartners();};
+    window.viewPBk=async(pid,name)=>{
+      const snap=await getDocs(query(collection(db,"bookings"),where("partnerId","==",pid)));
+      const bks=snap.docs.map(d=>({id:d.id,...d.data()}));
+      openModal(`<h3>📅 ${name}</h3>${bks.length?`<table><tr><th>Customer</th><th>Service</th><th>Date</th><th>Status</th></tr>${bks.map(b=>`<tr><td>${b.customerName||"—"}</td><td>${b.service||"—"}</td><td>${b.date||"—"}</td><td><span class="badge badge-${b.status||'pending'}">${b.status||"—"}</span></td></tr>`).join("")}</table>`:'<div class="empty"><div class="em">📭</div><p>No bookings</p></div>'}<button class="btn btn-ghost" style="margin-top:14px;" onclick="closeModal()">Close</button>`);
     };
   }catch(e){el.innerHTML=`<div class="empty"><div class="em">⚠️</div><p>${e.message}</p></div>`;}
 }
 
+window.assignToPartner = async function(bookingId) {
+  try {
+    const pSnap=await getDocs(query(collection(db,"partners"),where("status","==","approved")));
+    const partners=pSnap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!partners.length) return toast("No approved partners","error");
+    openModal(`<h3>🤝 Assign to Partner</h3><div style="display:flex;flex-direction:column;gap:10px;">${partners.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:12px;padding:12px 14px;"><div><div style="font-weight:800;">${p.name}</div><div style="font-size:11px;color:var(--muted);">${p.type} · ${p.city}</div></div><button class="btn btn-primary btn-sm" onclick="doAssign('${bookingId}','${p.id}','${(p.name||'').replace(/'/g,"\'")}')">Assign →</button></div>`).join("")}</div><button class="btn btn-ghost" style="margin-top:14px;width:100%;justify-content:center;" onclick="closeModal()">Cancel</button>`);
+    window.doAssign=async(bId,pId,pName)=>{await updateDoc(doc(db,"bookings",bId),{partnerId:pId,partnerName:pName,status:"confirmed",assignedAt:serverTimestamp()});toast("Assigned to "+pName+" ✅","success");closeModal();loadBookings();};
+  }catch(e){toast("Error: "+e.message,"error");}
+};
+
+async function renderTierRequests(el){
+  if(window.currentRole!=="admin"){el.innerHTML='<div class="empty"><div class="em">🔒</div><p>Admin only</p></div>';return;}
+  el.innerHTML='<div class="card"><div class="card-body table-wrap" id="tierTable"><div class="empty"><div class="em">⏳</div><p>Loading…</p></div></div></div>';
+  try{
+    const snap=await getDocs(query(collection(db,"tier_requests"),orderBy("createdAt","desc")));
+    const reqs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!reqs.length){document.getElementById("tierTable").innerHTML='<div class="empty"><div class="em">🏆</div><p>No upgrade requests</p></div>';return;}
+    document.getElementById("tierTable").innerHTML=`<table><tr><th>Partner</th><th>Email</th><th>Requested</th><th>Price</th><th>Status</th><th>Actions</th></tr>${reqs.map(r=>`<tr><td style="font-weight:800;">${r.partnerName||"—"}</td><td style="font-size:12px;color:var(--muted);">${r.email||"—"}</td><td><span class="badge badge-${r.requestedTier==='premium'?'completed':r.requestedTier==='verified'?'confirmed':'customer'}">${r.tierName||r.requestedTier}</span></td><td style="font-weight:800;">${r.price||"—"}</td><td><span class="badge badge-${r.status==='approved'?'confirmed':r.status==='rejected'?'cancelled':'pending'}">${r.status||"pending"}</span></td><td><div class="action-row">${r.status==='pending'?`<button class="btn btn-success btn-sm" onclick="approveTier('${r.id}','${r.partnerId}','${r.requestedTier}')">✅ Approve</button><button class="btn btn-danger btn-sm" onclick="rejectTier('${r.id}')">❌ Reject</button>`:"<span style='font-size:12px;color:var(--muted);'>Done</span>"}</div></td></tr>`).join("")}</table>`;
+    window.approveTier=async(reqId,partnerId,tier)=>{const cm={basic:10,verified:8,premium:5};await updateDoc(doc(db,"tier_requests",reqId),{status:"approved"});await updateDoc(doc(db,"partners",partnerId),{tier,commission:cm[tier]});toast("Tier upgraded ✅","success");renderTierRequests(el);};
+    window.rejectTier=async(reqId)=>{await updateDoc(doc(db,"tier_requests",reqId),{status:"rejected"});toast("Rejected","success");renderTierRequests(el);};
+  }catch(e){document.getElementById("tierTable").innerHTML=`<div class="empty"><div class="em">⚠️</div><p>${e.message}</p></div>`;}
+}
+
+
 // ── INITIAL RENDER ────────────────────────────────────────
 window.renderApp();
 
+// Register auth listener AFTER renderApp is defined above
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    window.currentUser = user;
+    try {
+      const snap = await getDocs(query(collection(db, "staff"), where("email", "==", user.email)));
+      if (!snap.empty) {
+        window.currentRole = snap.docs[0].data().role;
+        window.staffName = snap.docs[0].data().name;
+      } else {
+        window.currentRole = "customer";
+      }
+    } catch(e) { window.currentRole = "customer"; }
+  } else {
+    window.currentUser = null;
+    window.currentRole = null;
+  }
+  window.renderApp();
+});
+
+// Show login immediately — no waiting
+window.renderApp();
 </script>
-
-<!--
-╔══════════════════════════════════════════════════════════════╗
-║         FIREBASE SETUP GUIDE — READ THIS CAREFULLY          ║
-║         Takes about 10 minutes · Completely FREE            ║
-╚══════════════════════════════════════════════════════════════╝
-
-STEP 1 — Create a Firebase Project (Free)
-  1. Go to: https://console.firebase.google.com
-  2. Click "Add project"
-  3. Name it "joyfully-in" → click Continue
-  4. Disable Google Analytics (not needed) → click "Create project"
-  5. Wait for it to create → click "Continue"
-
-STEP 2 — Create a Web App
-  1. On the project dashboard, click the "</>" (Web) icon
-  2. Name it "joyfully-in-web" → click "Register app"
-  3. You'll see a code block with firebaseConfig — COPY ALL OF IT
-  4. Click "Continue to console"
-
-STEP 3 — Replace Config in This File
-  1. Open this file in Notepad (right-click → Open with → Notepad)
-  2. Find the line that says: const firebaseConfig = {
-  3. Replace the REPLACE_WITH_YOUR_... values with what you copied
-  4. Save the file
-
-STEP 4 — Enable Authentication
-  1. In Firebase Console, click "Authentication" in left menu
-  2. Click "Get started"
-  3. Click "Email/Password" → Enable → Save
-
-STEP 5 — Create Firestore Database
-  1. Click "Firestore Database" in left menu
-  2. Click "Create database"
-  3. Choose "Start in test mode" → Next
-  4. Choose region "asia-south1 (Mumbai)" → Enable
-
-STEP 6 — Create Your Admin Account
-  1. In Firebase Console → Authentication → Users → Add user
-  2. Enter your email & a password
-  3. Copy your email address
-
-STEP 7 — Set Yourself as Admin in Firestore
-  1. In Firebase Console → Firestore Database → Start collection
-  2. Collection ID: "staff" → Next
-  3. Auto ID → Add fields:
-     - email (string): your@email.com
-     - name (string): Your Name
-     - role (string): admin
-  4. Click Save
-
-STEP 8 — Upload the Updated File
-  1. Save this file
-  2. Go to Netlify → your joyfully.in project
-  3. Drag & drop this file again
-  4. Your full backend is now LIVE!
-
-DONE! You now have:
-  ✅ Real bookings saved to database
-  ✅ Admin panel with staff management
-  ✅ Pet profiles
-  ✅ Product management
-  ✅ Adoption management
-  ✅ Reports & analytics
--->
-
 </body>
 </html>
