@@ -289,7 +289,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
         <span id="navUserName"></span>
         <button class="btn btn-outline btn-sm" onclick="handleSignOut()">Sign Out</button>
       </div>
-      <a href="#" class="btn btn-primary btn-sm" id="navLoginBtn" onclick="openLoginModal(event)" style="transition:all .3s;">Sign In</a>
+      <a href="#" class="btn btn-outline btn-sm" id="navLoginBtn" onclick="openLoginModal(event)">Sign In</a>
     </div>
     <button class="ham" id="ham" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
@@ -410,7 +410,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
       <!-- Loaded from Firebase -->
       <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">
         <div style="font-size:40px;margin-bottom:12px;">⏳</div>
-        <p>Loading partners…</p>
+        <p>Loading agencies…</p>
       </div>
     </div>
   </div>
@@ -724,6 +724,13 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
 </div>
 
 <script type="module">
+await new Promise(r => setTimeout(r, 900));
+// Wait for Firebase to be ready from first script
+let _attempts = 0;
+while (!window.DB && _attempts < 50) {
+  await new Promise(r => setTimeout(r, 50));
+  _attempts++;
+}
 const { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } = window.FIREBASE;
 const db = window.DB, auth = window.AUTH;
 
@@ -767,10 +774,9 @@ window.updateAuthUI = function() {
 
 // ── NAV ───────────────────────────────────────────────────
 window.addEventListener("scroll", () => {
-  const nb = document.getElementById("navbar");
-  nb.classList.toggle("scrolled", window.scrollY > 40);
-  // on-hero = near top of page where dark hero is visible
-  nb.classList.toggle("on-hero", window.scrollY < 80);
+  const _n = document.getElementById("navbar");
+  _n.classList.toggle("scrolled", window.scrollY > 40);
+  _n.classList.toggle("on-hero", window.scrollY < 80);
   revealOnScroll();
 });
 document.getElementById("ham").addEventListener("click", () => document.getElementById("mobNav").classList.add("open"));
@@ -848,7 +854,7 @@ async function loadPartners() {
     grid.innerHTML = partners.map(p=>`
       <div class="agency-card reveal">
         <div class="agency-img" style="background:${typeBg[p.type]||"#f5f5f5"};">
-          <span style="font-size:60px;">${typeEmoji[p.type]||"🐾"}</span>
+          <span style="font-size:60px;">${typeEmoji[a.type]||"🐾"}</span>
           <span class="agency-badge">✅ Verified</span>
         </div>
         <div class="agency-body">
@@ -859,7 +865,7 @@ async function loadPartners() {
             ${p.type==="grooming"?'<span class="atag">Dog Grooming</span>':""}
             ${p.type==="vet"?'<span class="atag">Vet Clinic</span>':""}
             ${p.type==="burial"?'<span class="atag">🕊️ Memorial Services</span>':""}
-            ${p.tier && p.tier!=="basic"?`<span class="atag">${p.tier}</span>`:""}
+            ${p.tier && p.tier!=="basic"?`<span class="atag">${p.tier}</span>`:""} yrs</span>`:""}
             <span class="atag">Book Now</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -1113,11 +1119,8 @@ loadPartners();
 loadStoreProducts();
 revealOnScroll();
 window.addEventListener("load", revealOnScroll);
-// Set initial navbar state
-const nb2 = document.getElementById("navbar");
-if (nb2) {
-  nb2.classList.toggle("on-hero", window.scrollY < 80);
-}
+const _nb = document.getElementById("navbar");
+if(_nb) _nb.classList.add("on-hero");
 </script>
 </body>
 </html>
