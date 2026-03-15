@@ -279,7 +279,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
     </a>
     <ul class="nav-links">
       <li><a href="#services">Services</a></li>
-      <li><a href="#agencies">Find Agencies</a></li>
+      <li><a href="#partners">Find Partners</a></li>
       <li><a href="#store">Store</a></li>
       <li><a href="#booking">Book Now</a></li>
       <li><a href="#register-agency">List Your Business</a></li>
@@ -299,7 +299,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
 <div class="mob-nav" id="mobNav">
   <button class="mob-close" id="mobClose">✕</button>
   <a href="#services" onclick="closeMob()">Services</a>
-  <a href="#agencies" onclick="closeMob()">Find Agencies</a>
+  <a href="#partners" onclick="closeMob()">Find Partners</a>
   <a href="#store" onclick="closeMob()">Store</a>
   <a href="#booking" onclick="closeMob()">Book Now</a>
   <a href="#register-agency" onclick="closeMob()">List Your Business</a>
@@ -320,7 +320,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
       <p>Book grooming, hostel stays, vet visits, adoption, burial services & more — all from one trusted platform in Assam.</p>
       <div class="hero-btns">
         <a href="#booking" class="btn btn-primary" style="font-size:16px;padding:15px 30px;">Book a Service 🐾</a>
-        <a href="#agencies" class="btn btn-white" style="font-size:16px;padding:15px 30px;">Find Agencies</a>
+        <a href="#partners" class="btn btn-white" style="font-size:16px;padding:15px 30px;">Find Partners</a>
       </div>
       <div class="hero-stats">
         <div class="hst"><div class="hst-v">500+</div><div class="hst-l">Happy Pets</div></div>
@@ -390,27 +390,27 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
 </section>
 
 <!-- ── LISTED AGENCIES ────────────────────────────────── -->
-<section id="agencies" class="section" style="background:#fff;">
+<section id="partners" class="section" style="background:#fff;">
   <div class="container">
     <div class="section-head reveal">
-      <div class="tag">🏢 Verified Agencies</div>
-      <h2>Find Trusted Pet Service Providers</h2>
-      <p>All agencies on joyfully.in are verified. Browse by service and book instantly.</p>
+      <div class="tag">🤝 Verified Partners</div>
+      <h2>Find Trusted Pet Service Partners</h2>
+      <p>All partners on joyfully.in are verified. Browse by service and book instantly.</p>
     </div>
     <!-- Filter tabs -->
-    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;" id="agencyFilterTabs">
-      <button class="btn btn-primary btn-sm" onclick="filterAgencies('all',this)">All</button>
-      <button class="btn btn-outline btn-sm" onclick="filterAgencies('hostel',this)">🏠 Hostel</button>
-      <button class="btn btn-outline btn-sm" onclick="filterAgencies('grooming',this)">✂️ Grooming</button>
-      <button class="btn btn-outline btn-sm" onclick="filterAgencies('vet',this)">🩺 Vet</button>
-      <button class="btn btn-outline btn-sm" onclick="filterAgencies('adoption',this)">❤️ Adoption</button>
-      <button class="btn btn-outline btn-sm" onclick="filterAgencies('burial',this)">🕊️ Burial</button>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;" id="partnerFilterTabs">
+      <button class="btn btn-primary btn-sm" onclick="filterPartners('all',this)">All</button>
+      <button class="btn btn-outline btn-sm" onclick="filterPartners('hostel',this)">🏠 Hostel</button>
+      <button class="btn btn-outline btn-sm" onclick="filterPartners('grooming',this)">✂️ Grooming</button>
+      <button class="btn btn-outline btn-sm" onclick="filterPartners('vet',this)">🩺 Vet</button>
+      <button class="btn btn-outline btn-sm" onclick="filterPartners('adoption',this)">❤️ Adoption</button>
+      <button class="btn btn-outline btn-sm" onclick="filterPartners('burial',this)">🕊️ Burial</button>
     </div>
-    <div class="agency-grid" id="agencyGrid">
+    <div class="agency-grid" id="partnerGrid">
       <!-- Loaded from Firebase -->
       <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">
         <div style="font-size:40px;margin-bottom:12px;">⏳</div>
-        <p>Loading agencies…</p>
+        <p>Loading partners…</p>
       </div>
     </div>
   </div>
@@ -826,45 +826,47 @@ window.handleSignOut = async function() {
 
 // ── LOAD AGENCIES ─────────────────────────────────────────
 window._agencyFilter = "all";
-async function loadAgencies() {
-  const grid = document.getElementById("agencyGrid");
+async function loadPartners() {
+  const grid = document.getElementById("partnerGrid");
   if (!grid) return;
   try {
-    const snap = await getDocs(query(collection(db, "agencies"), where("status","==","approved")));
-    let agencies = snap.docs.map(d=>({id:d.id,...d.data()}));
-    if (window._agencyFilter !== "all") agencies = agencies.filter(a=>a.type===window._agencyFilter);
-    if (!agencies.length) {
+    const snap = await getDocs(query(collection(db, "partners"), where("status","==","approved")));
+    let partners = snap.docs.map(d=>({id:d.id,...d.data()}));
+    if (window._partnerFilter !== "all") partners = partners.filter(p=>p.type===window._partnerFilter);
+    if (!partners.length) {
       grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted);">
-        <div style="font-size:48px;margin-bottom:12px;">🏢</div>
-        <p style="font-size:15px;">No agencies listed yet in this category.<br/>
+        <div style="font-size:48px;margin-bottom:12px;">🤝</div>
+        <p style="font-size:15px;">No partners listed yet in this category.<br/>
         <a href="#register-agency" style="color:var(--p);font-weight:800;">Be the first to list your business →</a></p>
       </div>`;
       return;
     }
     const typeEmoji = {hostel:"🏠",grooming:"✂️",vet:"🩺",adoption:"❤️",burial:"🕊️",breeder:"🐾",multi:"🐾"};
     const typeBg = {hostel:"#e0f2f1",grooming:"#fce4ec",vet:"#e8f5e9",adoption:"#f3e5f5",burial:"#f0f0f0",breeder:"#fff8e1",multi:"#e8f0fe"};
-    grid.innerHTML = agencies.map(a=>`
+    const tierBadge = {verified:'<span style="background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;">✅ Verified</span>', premium:'<span style="background:#fff8e1;color:#f59e0b;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;">⭐ Premium</span>'};
+    grid.innerHTML = partners.map(p=>`
       <div class="agency-card reveal">
-        <div class="agency-img" style="background:${typeBg[a.type]||"#f5f5f5"};">
-          <span style="font-size:60px;">${typeEmoji[a.type]||"🐾"}</span>
-          <span class="agency-badge">✅ Verified</span>
+        <div class="agency-img" style="background:${typeBg[p.type]||"#f5f5f5"};">
+          <span style="font-size:60px;">${typeEmoji[p.type]||"🐾"}</span>
+          <span class="agency-badge">${p.tier==='premium'?'⭐ Premium':'✅ Approved'}</span>
         </div>
         <div class="agency-body">
-          <div class="agency-name">${a.name||"Agency"}</div>
-          <div class="agency-type">${a.city||"Guwahati"} · ${a.type||"Pet Service"}</div>
+          <div class="agency-name">${p.name||"Partner"}</div>
+          <div class="agency-type">${p.city||"Guwahati"} · ${p.type||"Pet Service"}</div>
           <div class="agency-tags">
-            ${a.type==="hostel"?'<span class="atag">Pet Hostel</span>':""}
-            ${a.type==="grooming"?'<span class="atag">Dog Grooming</span>':""}
-            ${a.type==="vet"?'<span class="atag">Vet Clinic</span>':""}
-            ${a.type==="burial"?'<span class="atag">🕊️ Memorial Services</span>':""}
-            ${a.years?`<span class="atag">${a.years} yrs</span>`:""}
+            ${p.type==="hostel"?'<span class="atag">🏠 Pet Hostel</span>':""}
+            ${p.type==="grooming"?'<span class="atag">✂️ Grooming</span>':""}
+            ${p.type==="vet"?'<span class="atag">🩺 Vet Clinic</span>':""}
+            ${p.type==="burial"?'<span class="atag">🕊️ Burial Service</span>':""}
+            ${p.type==="adoption"?'<span class="atag">❤️ Adoption</span>':""}
+            ${p.type==="breeder"?'<span class="atag">🐾 Breeder</span>':""}
             <span class="atag">Book Now</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div class="agency-rating">
               <span class="stars">⭐</span>
-              <span>${a.rating||"New"}</span>
-              <span style="color:var(--muted);font-weight:400;font-size:12px;">(${a.reviews||0} reviews)</span>
+              <span>${p.rating||"New"}</span>
+              <span style="color:var(--muted);font-weight:400;font-size:12px;">(${p.reviews||0} reviews)</span>
             </div>
             <a href="#booking" class="btn btn-primary btn-sm">Book</a>
           </div>
@@ -873,18 +875,18 @@ async function loadAgencies() {
     revealOnScroll();
   } catch(e) {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">
-      <p>Could not load agencies. <a href="#register-agency" style="color:var(--p);">Register yours →</a></p>
+      <p>Could not load partners. <a href="#register-agency" style="color:var(--p);">Register yours →</a></p>
     </div>`;
   }
 }
 
-window.filterAgencies = function(type, btn) {
-  window._agencyFilter = type;
-  document.querySelectorAll("#agencyFilterTabs button").forEach(b => {
+window.filterPartners = function(type, btn) {
+  window._partnerFilter = type;
+  document.querySelectorAll("#partnerFilterTabs button").forEach(b => {
     b.className = "btn btn-outline btn-sm";
   });
   btn.className = "btn btn-primary btn-sm";
-  loadAgencies();
+  loadPartners();
 };
 
 // ── LOAD STORE PRODUCTS ───────────────────────────────────
@@ -1106,7 +1108,8 @@ function revealOnScroll(){ document.querySelectorAll(".reveal:not(.visible)").fo
 window.revealOnScroll = revealOnScroll;
 
 // ── INIT ──────────────────────────────────────────────────
-loadAgencies();
+window._partnerFilter = "all";
+loadPartners();
 loadStoreProducts();
 revealOnScroll();
 window.addEventListener("load", revealOnScroll);
