@@ -295,7 +295,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
       <p>Book grooming, hostel stays, vet visits, adoption, burial services & more — all from one trusted platform in Assam.</p>
       <div class="hero-btns">
         <a href="#booking" class="btn btn-primary" style="font-size:16px;padding:15px 30px;">Book a Service 🐾</a>
-        <a href="#partners" class="btn btn-white" style="font-size:16px;padding:15px 30px;">Find Agencies</a>
+        <a href="#partners" class="btn btn-white" style="font-size:16px;padding:15px 30px;">Find Partners</a>
       </div>
       <div class="hero-stats">
         <div class="hst"><div class="hst-v">500+</div><div class="hst-l">Happy Pets</div></div>
@@ -385,7 +385,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
       <!-- Loaded from Firebase -->
       <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">
         <div style="font-size:40px;margin-bottom:12px;">⏳</div>
-        <p>Loading agencies…</p>
+        <p>Loading partners…</p>
       </div>
     </div>
   </div>
@@ -627,7 +627,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
       <div class="fcol"><h4>Contact</h4><ul>
         <li><a href="#">📍 Paltan Bazar, Guwahati</a></li>
         <li><a href="tel:+919876543210">📞 +91 98765 43210</a></li>
-        <li><a href="mailto:hello@joyfully.in">📧 hello@joyfully.in</a></li>
+        <li><a href="/cdn-cgi/l/email-protection#bad2dfd6d6d5fad0d5c3dccfd6d6c394d3d4">📧 <span class="__cf_email__" data-cfemail="f098959c9c9fb09a9f8996859c9c89de999e">[email&#160;protected]</span></a></li>
         <li><a href="#">⏰ Mon–Sat: 9AM–7PM</a></li>
       </ul></div>
     </div>
@@ -663,7 +663,6 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
       <div class="form-group"><label>Password</label><input id="lPassword" type="password" placeholder="••••••••"/></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:15px;" id="loginSubmitBtn" onclick="handleLoginSubmit()">Sign In →</button>
       <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px;">
-        Staff & Admin? Use the <a href="/admin" style="color:var(--p);font-weight:800;">Admin Panel</a> instead.
       </p>
     </div>
   </div>
@@ -702,7 +701,7 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
 </div>
 
 
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1103,12 +1102,13 @@ function revealOnScroll(){ document.querySelectorAll(".reveal:not(.visible)").fo
 window.revealOnScroll = revealOnScroll;
 
 // ── INIT ──────────────────────────────────────────────────
-window._partnerFilter="all"; loadPartners();
+window._partnerFilter = "all";
+loadPartners();
 loadStoreProducts();
 revealOnScroll();
 window.addEventListener("load", revealOnScroll);
-const _nb=document.getElementById("navbar"); if(_nb) _nb.classList.add("on-hero");
+const _nb = document.getElementById("navbar");
+if(_nb) _nb.classList.add("on-hero");
 </script>
-
 </body>
 </html>
