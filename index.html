@@ -168,11 +168,12 @@ nav.scrolled .nav-links a:hover{color:var(--p);}
 .form-success.show{display:block;}
 /* ── STORE PREVIEW ── */
 .products-scroll{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;padding:4px 0 12px;}
-.prod-mini{background:#fff;border-radius:18px;overflow:hidden;border:1px solid var(--border);transition:all .3s;}
+.products-scroll::-webkit-scrollbar{display:none;}
+.prod-mini{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--border);transition:all .3s;}
 .prod-mini:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
-.prod-mini-img{height:180px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;overflow:hidden;}.prod-mini-img img{width:100%;height:100%;object-fit:cover;}.prod-cat-badge{display:inline-block;background:var(--bg);color:var(--muted);font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;margin-bottom:4px;}
+.prod-mini-img{height:180px;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;}
 .prod-mini-body{padding:12px 14px 14px;}
-.prod-mini-body h4{font-size:13px;font-weight:800;color:var(--dark);margin-bottom:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.prod-mini-body h4{font-size:13px;font-weight:800;color:var(--dark);margin-bottom:6px;}
 .prod-mini-footer{display:flex;align-items:center;justify-content:space-between;}
 .prod-price{font-family:'Baloo 2',cursive;font-size:18px;font-weight:900;color:var(--p);}
 .add-cart-btn{background:var(--p);color:#fff;border:none;border-radius:10px;padding:7px 12px;font-weight:800;font-size:12px;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;}
@@ -723,7 +724,6 @@ footer{background:#0f0c1e;padding:56px 0 28px;}
 </div>
 
 <script type="module">
-await new Promise(r => setTimeout(r, 900));
 const { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } = window.FIREBASE;
 const db = window.DB, auth = window.AUTH;
 
@@ -845,25 +845,25 @@ async function loadPartners() {
     grid.innerHTML = partners.map(p=>`
       <div class="agency-card reveal">
         <div class="agency-img" style="background:${typeBg[p.type]||"#f5f5f5"};">
-          <span style="font-size:60px;">${typeEmoji[a.type]||"🐾"}</span>
+          <span style="font-size:60px;">${typeEmoji[p.type]||"🐾"}</span>
           <span class="agency-badge">✅ Verified</span>
         </div>
         <div class="agency-body">
-          <div class="agency-name">${a.name||"Agency"}</div>
-          <div class="agency-type">${a.city||"Guwahati"} · ${a.type||"Pet Service"}</div>
+          <div class="agency-name">${p.name||"Partner"}</div>
+          <div class="agency-type">${p.city||"Guwahati"} · ${p.type||"Pet Service"}</div>
           <div class="agency-tags">
-            ${a.type==="hostel"?'<span class="atag">Pet Hostel</span>':""}
-            ${a.type==="grooming"?'<span class="atag">Dog Grooming</span>':""}
-            ${a.type==="vet"?'<span class="atag">Vet Clinic</span>':""}
-            ${a.type==="burial"?'<span class="atag">🕊️ Memorial Services</span>':""}
-            ${a.years?`<span class="atag">${a.years} yrs</span>`:""}
+            ${p.type==="hostel"?'<span class="atag">Pet Hostel</span>':""}
+            ${p.type==="grooming"?'<span class="atag">Dog Grooming</span>':""}
+            ${p.type==="vet"?'<span class="atag">Vet Clinic</span>':""}
+            ${p.type==="burial"?'<span class="atag">🕊️ Memorial Services</span>':""}
+            ${p.tier && p.tier!=="basic"?`<span class="atag">${p.tier</span>`:""}
             <span class="atag">Book Now</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div class="agency-rating">
               <span class="stars">⭐</span>
-              <span>${a.rating||"New"}</span>
-              <span style="color:var(--muted);font-weight:400;font-size:12px;">(${a.reviews||0} reviews)</span>
+              <span>${p.rating||"New"}</span>
+              <span style="color:var(--muted);font-weight:400;font-size:12px;">(${p.reviews||0} reviews)</span>
             </div>
             <a href="#booking" class="btn btn-primary btn-sm">Book</a>
           </div>
